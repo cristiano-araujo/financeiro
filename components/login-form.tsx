@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Scissors } from "lucide-react"
+import { DollarSign } from "lucide-react"
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
@@ -36,11 +36,11 @@ export function LoginForm() {
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
             <div className="rounded-full bg-primary p-4">
-              <Scissors className="h-8 w-8 text-primary-foreground" />
+              <DollarSign className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
           <div>
-            <CardTitle className="text-2xl">Barbearia Pro</CardTitle>
+            <CardTitle className="text-2xl">R2C Controle</CardTitle>
             <CardDescription>Sistema de Gestão Financeira</CardDescription>
           </div>
         </CardHeader>
@@ -73,11 +73,6 @@ export function LoginForm() {
               {isLoading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
-          <div className="mt-6 space-y-2 text-sm text-muted-foreground">
-            <p className="font-medium">Credenciais de teste:</p>
-            <p>Admin: admin@barbearia.com / admin123</p>
-            <p>Usuário: barbeiro@barbearia.com / barbeiro123</p>
-          </div>
         </CardContent>
       </Card>
     </div>

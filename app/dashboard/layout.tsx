@@ -32,9 +32,9 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <SidebarNav />
-      <main className="lg:pl-64">
+      <main className="lg:pl-64 flex-1">
         <div className="p-6 lg:p-8">{children}</div>
       </main>
     </div>

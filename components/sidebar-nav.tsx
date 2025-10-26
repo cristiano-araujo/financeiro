@@ -8,7 +8,7 @@ import { useTheme } from "@/lib/theme-context"
 import {
   LayoutDashboard,
   DollarSign,
-  Scissors,
+  Briefcase,
   Users,
   Calendar,
   LogOut,
@@ -24,7 +24,7 @@ import { useState } from "react"
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Custos", href: "/dashboard/custos", icon: DollarSign },
-  { name: "Serviços", href: "/dashboard/servicos", icon: Scissors },
+  { name: "Serviços", href: "/dashboard/servicos", icon: Briefcase },
   { name: "Clientes", href: "/dashboard/clientes", icon: Users },
   { name: "Agendamentos", href: "/dashboard/agendamentos", icon: Calendar },
 ]
@@ -60,10 +60,10 @@ export function SidebarNav() {
           <div className="p-6 border-b border-border">
             <div className="flex items-center gap-3">
               <div className="rounded-lg bg-primary p-2">
-                <Scissors className="h-6 w-6 text-primary-foreground" />
+                <DollarSign className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">Barbearia Pro</h2>
+                <h2 className="font-semibold text-lg">R2C Controle</h2>
                 <p className="text-xs text-muted-foreground">{user?.name}</p>
               </div>
             </div>

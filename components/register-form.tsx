@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Scissors, ArrowLeft } from "lucide-react"
+import { DollarSign, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export function RegisterForm() {
@@ -79,11 +79,11 @@ export function RegisterForm() {
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
             <div className="rounded-full bg-primary p-4">
-              <Scissors className="h-8 w-8 text-primary-foreground" />
+              <DollarSign className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
           <div>
-            <CardTitle className="text-2xl">Criar Conta</CardTitle>
+            <CardTitle className="text-2xl">R2C Controle</CardTitle>
             <CardDescription>Cadastre-se no sistema de gestão</CardDescription>
           </div>
         </CardHeader>
