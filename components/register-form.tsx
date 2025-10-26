@@ -2,13 +2,12 @@
 
 import type React from "react"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DollarSign, ArrowLeft } from "lucide-react"
+import { Scissors, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export function RegisterForm() {
@@ -19,11 +18,12 @@ export function RegisterForm() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { registerUser } = useAuth()
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+
+    console.log("[v0] Iniciando cadastro...")
 
     // Validações
     if (!name.trim()) {
@@ -49,16 +49,21 @@ export function RegisterForm() {
     setIsLoading(true)
 
     try {
+      console.log("[v0] Chamando registerUser...")
       const success = await registerUser({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         password,
+        role: "user", // Novos cadastros são sempre usuários comuns
       })
 
       if (success) {
-        router.push("/dashboard")
+        console.log("[v0] Cadastro bem-sucedido, redirecionando...")
+        // Redireciona para o dashboard após cadastro bem-sucedido
+        window.location.href = "/dashboard"
       } else {
-        setError("Erro ao criar conta. Tente novamente.")
+        console.log("[v0] Email já cadastrado")
+        setError("Este email já está cadastrado")
         setIsLoading(false)
       }
     } catch (err) {
@@ -74,11 +79,11 @@ export function RegisterForm() {
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
             <div className="rounded-full bg-primary p-4">
-              <DollarSign className="h-8 w-8 text-primary-foreground" />
+              <Scissors className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
           <div>
-            <CardTitle className="text-2xl">R2C Controle</CardTitle>
+            <CardTitle className="text-2xl">Criar Conta</CardTitle>
             <CardDescription>Cadastre-se no sistema de gestão</CardDescription>
           </div>
         </CardHeader>

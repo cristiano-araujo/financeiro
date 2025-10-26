@@ -6,14 +6,13 @@ import "./globals.css"
 import { AuthProvider } from "@/lib/auth-context"
 import { DataProvider } from "@/lib/data-context"
 import { ThemeProvider } from "@/lib/theme-context"
-import { Footer } from "@/components/footer"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "R2C Controle - Sistema Financeiro",
-  description: "Sistema de gestão financeira para empresas",
+  title: "Barbearia - Sistema Financeiro",
+  description: "Sistema de gestão financeira para barbearias",
   generator: "v0.app",
 }
 
@@ -24,13 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`font-sans antialiased flex flex-col min-h-screen`}>
+      <body className={`font-sans antialiased`}>
         <ThemeProvider>
           <AuthProvider>
-            <DataProvider>
-              <div className="flex-1">{children}</div>
-              <Footer />
-            </DataProvider>
+            <DataProvider>{children}</DataProvider>
           </AuthProvider>
         </ThemeProvider>
         <Analytics />

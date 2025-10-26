@@ -1,227 +1,160 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import { createClient } from "@/lib/supabase/client"
-import type { User as SupabaseUser } from "@supabase/supabase-js"
-
-interface Profile {
-  id: string
-  nome: string
-  role: "admin" | "user"
-  created_at: string
-}
-
-interface User {
-  id: string
-  email: string
-  nome: string
-  role: "admin" | "user"
-}
+import type { User } from "./types"
 
 interface AuthContextType {
   user: User | null
-  profile: Profile | null
   login: (email: string, password: string) => Promise<boolean>
-  logout: () => Promise<void>
+  logout: () => void
   isLoading: boolean
-  registerUser: (userData: { name: string; email: string; password: string }) => Promise<boolean>
-  getAllProfiles: () => Promise<Profile[]>
-  updateProfile: (id: string, data: Partial<Profile>) => Promise<boolean>
-  deleteProfile: (id: string) => Promise<boolean>
+  getAllUsers: () => Array<User & { password: string }>
+  addUser: (userData: Omit<User, "id" | "createdAt"> & { password: string }) => void
+  updateUser: (id: string, userData: Partial<User & { password?: string }>) => void
+  deleteUser: (id: string) => void
+  registerUser: (userData: {
+    name: string
+    email: string
+    password: string
+    role: "admin" | "user"
+  }) => Promise<boolean>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// Usuários iniciais para demonstração
+const INITIAL_USERS: Array<User & { password: string }> = [
+  {
+    id: "1",
+    name: "Administrador",
+    email: "admin@barbearia.com",
+    password: "admin123",
+    role: "admin",
+    createdAt: new Date(),
+  },
+  {
+    id: "2",
+    name: "Barbeiro",
+    email: "barbeiro@barbearia.com",
+    password: "barbeiro123",
+    role: "user",
+    createdAt: new Date(),
+  },
+]
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClient()
+  const [users, setUsers] = useState<Array<User & { password: string }>>([])
 
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession()
-
-        if (session?.user) {
-          await loadUserProfile(session.user)
-        }
-      } catch (error) {
-        console.error("[v0] Erro ao verificar sessão:", error)
-      } finally {
-        setIsLoading(false)
-      }
+    const savedUsers = localStorage.getItem("barbershop_users")
+    if (savedUsers) {
+      setUsers(JSON.parse(savedUsers))
+    } else {
+      setUsers(INITIAL_USERS)
+      localStorage.setItem("barbershop_users", JSON.stringify(INITIAL_USERS))
     }
 
-    checkSession()
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        await loadUserProfile(session.user)
-      } else {
-        setUser(null)
-        setProfile(null)
-      }
-    })
-
-    return () => {
-      subscription.unsubscribe()
+    // Verificar se há usuário logado salvo no localStorage
+    const savedUser = localStorage.getItem("barbershop_user")
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
     }
+    setIsLoading(false)
   }, [])
 
-  const loadUserProfile = async (authUser: SupabaseUser) => {
-    try {
-      const { data: profileData, error } = await supabase.from("profiles").select("*").eq("id", authUser.id).single()
-
-      if (error) throw error
-
-      if (profileData) {
-        setProfile(profileData)
-        setUser({
-          id: authUser.id,
-          email: authUser.email!,
-          nome: profileData.nome,
-          role: profileData.role,
-        })
-      }
-    } catch (error) {
-      console.error("[v0] Erro ao carregar perfil:", error)
-    }
-  }
-
   const login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+    const foundUser = users.find((u) => u.email === email && u.password === password)
 
-      if (error) throw error
-
-      if (data.user) {
-        await loadUserProfile(data.user)
-        return true
-      }
-
-      return false
-    } catch (error) {
-      console.error("[v0] Erro no login:", error)
-      return false
+    if (foundUser) {
+      const { password: _, ...userWithoutPassword } = foundUser
+      setUser(userWithoutPassword)
+      localStorage.setItem("barbershop_user", JSON.stringify(userWithoutPassword))
+      return true
     }
+
+    return false
   }
 
-  const logout = async () => {
-    try {
-      await supabase.auth.signOut()
-      setUser(null)
-      setProfile(null)
-    } catch (error) {
-      console.error("[v0] Erro no logout:", error)
-    }
+  const logout = () => {
+    setUser(null)
+    localStorage.removeItem("barbershop_user")
   }
 
   const registerUser = async (userData: {
     name: string
     email: string
     password: string
+    role: "admin" | "user"
   }): Promise<boolean> => {
-    try {
-      console.log("[v0] Tentando registrar usuário:", userData.email)
+    console.log("[v0] Tentando registrar usuário:", userData.email)
 
-      const { data, error } = await supabase.auth.signUp({
-        email: userData.email,
-        password: userData.password,
-        options: {
-          emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`,
-          data: {
-            nome: userData.name,
-            role: "user",
-          },
-        },
-      })
-
-      if (error) throw error
-
-      console.log("[v0] Usuário registrado com sucesso:", userData.email)
-
-      // Se não requer confirmação de email, fazer login automático
-      if (data.user && data.session) {
-        await loadUserProfile(data.user)
-        return true
-      }
-
-      return true
-    } catch (error) {
-      console.error("[v0] Erro ao registrar:", error)
+    // Verificar se o email já existe
+    const emailExists = users.some((u) => u.email === userData.email)
+    if (emailExists) {
+      console.log("[v0] Email já cadastrado:", userData.email)
       return false
+    }
+
+    // Criar novo usuário
+    const newUser = {
+      ...userData,
+      id: Date.now().toString(),
+      createdAt: new Date(),
+    }
+
+    const updatedUsers = [...users, newUser]
+    setUsers(updatedUsers)
+    localStorage.setItem("barbershop_users", JSON.stringify(updatedUsers))
+
+    console.log("[v0] Usuário registrado com sucesso:", userData.email)
+
+    // Fazer login automático
+    const { password: _, ...userWithoutPassword } = newUser
+    setUser(userWithoutPassword)
+    localStorage.setItem("barbershop_user", JSON.stringify(userWithoutPassword))
+
+    return true
+  }
+
+  const getAllUsers = () => {
+    return users
+  }
+
+  const addUser = (userData: Omit<User, "id" | "createdAt"> & { password: string }) => {
+    const newUser = {
+      ...userData,
+      id: Date.now().toString(),
+      createdAt: new Date(),
+    }
+    const updatedUsers = [...users, newUser]
+    setUsers(updatedUsers)
+    localStorage.setItem("barbershop_users", JSON.stringify(updatedUsers))
+  }
+
+  const updateUser = (id: string, userData: Partial<User & { password?: string }>) => {
+    const updatedUsers = users.map((u) => (u.id === id ? { ...u, ...userData } : u))
+    setUsers(updatedUsers)
+    localStorage.setItem("barbershop_users", JSON.stringify(updatedUsers))
+
+    // Se o usuário atualizado é o usuário logado, atualizar também
+    if (user?.id === id) {
+      const { password: _, ...userWithoutPassword } = updatedUsers.find((u) => u.id === id)!
+      setUser(userWithoutPassword)
+      localStorage.setItem("barbershop_user", JSON.stringify(userWithoutPassword))
     }
   }
 
-  const getAllProfiles = async (): Promise<Profile[]> => {
-    try {
-      const { data, error } = await supabase.from("profiles").select("*").order("created_at", { ascending: false })
-
-      if (error) throw error
-      return data || []
-    } catch (error) {
-      console.error("[v0] Erro ao buscar perfis:", error)
-      return []
-    }
-  }
-
-  const updateProfile = async (id: string, profileData: Partial<Profile>): Promise<boolean> => {
-    try {
-      const { error } = await supabase.from("profiles").update(profileData).eq("id", id)
-
-      if (error) throw error
-
-      // Se atualizou o próprio perfil, recarregar
-      if (id === user?.id) {
-        const {
-          data: { user: authUser },
-        } = await supabase.auth.getUser()
-        if (authUser) {
-          await loadUserProfile(authUser)
-        }
-      }
-
-      return true
-    } catch (error) {
-      console.error("[v0] Erro ao atualizar perfil:", error)
-      return false
-    }
-  }
-
-  const deleteProfile = async (id: string): Promise<boolean> => {
-    try {
-      // Deletar o usuário do auth (cascade vai deletar o perfil)
-      const { error } = await supabase.auth.admin.deleteUser(id)
-
-      if (error) throw error
-      return true
-    } catch (error) {
-      console.error("[v0] Erro ao deletar perfil:", error)
-      return false
-    }
+  const deleteUser = (id: string) => {
+    const updatedUsers = users.filter((u) => u.id !== id)
+    setUsers(updatedUsers)
+    localStorage.setItem("barbershop_users", JSON.stringify(updatedUsers))
   }
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        profile,
-        login,
-        logout,
-        isLoading,
-        registerUser,
-        getAllProfiles,
-        updateProfile,
-        deleteProfile,
-      }}
+      value={{ user, login, logout, isLoading, getAllUsers, addUser, updateUser, deleteUser, registerUser }}
     >
       {children}
     </AuthContext.Provider>
