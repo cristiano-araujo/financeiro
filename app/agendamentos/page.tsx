@@ -276,7 +276,7 @@ export default function AgendamentosPage() {
           <TabsTrigger value="agendado" className="w-full">Pendentes</TabsTrigger>
           <TabsTrigger value="confirmado" className="w-full">Confirmados</TabsTrigger>
           <TabsTrigger value="concluido" className="w-full">Concluídos</TabsTrigger>
-          <TabsTrigger value="cancelado" className="w-full">Cancelados</TabsTrigger>
+          {/* <TabsTrigger value="cancelado" className="w-full">Cancelados</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="todos">
