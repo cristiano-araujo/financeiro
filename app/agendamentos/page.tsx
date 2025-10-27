@@ -271,13 +271,54 @@ export default function AgendamentosPage() {
 
       {/* Tabs de Status - Responsivo */}
       <Tabs defaultValue="todos" className="space-y-4">
-        <TabsList className="!flex !flex-wrap md:!inline-flex h-auto w-full gap-1 p-1 bg-muted">
-          <TabsTrigger value="todos" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Todos</TabsTrigger>
-          <TabsTrigger value="agendado" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Pendentes</TabsTrigger>
-          <TabsTrigger value="confirmado" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Confirmados</TabsTrigger>
-          <TabsTrigger value="concluido" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Concluídos</TabsTrigger>
-          <TabsTrigger value="cancelado" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Cancelados</TabsTrigger>
-        </TabsList>
+        <div className="bg-muted rounded-lg p-1 flex flex-wrap gap-2">
+          <button
+            onClick={() => document.querySelector('[value="todos"]')?.click()}
+            className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 px-4 py-2 rounded-md font-medium transition-colors data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            data-value="todos"
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => document.querySelector('[value="agendado"]')?.click()}
+            className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 px-4 py-2 rounded-md font-medium transition-colors data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            data-value="agendado"
+          >
+            Pendentes
+          </button>
+          <button
+            onClick={() => document.querySelector('[value="confirmado"]')?.click()}
+            className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 px-4 py-2 rounded-md font-medium transition-colors data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            data-value="confirmado"
+          >
+            Confirmados
+          </button>
+          <button
+            onClick={() => document.querySelector('[value="concluido"]')?.click()}
+            className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 px-4 py-2 rounded-md font-medium transition-colors data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            data-value="concluido"
+          >
+            Concluídos
+          </button>
+          <button
+            onClick={() => document.querySelector('[value="cancelado"]')?.click()}
+            className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 px-4 py-2 rounded-md font-medium transition-colors data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            data-value="cancelado"
+          >
+            Cancelados
+          </button>
+        </div>
+        
+        {/* Triggers ocultos do shadcn para manter funcionalidade */}
+        <div className="hidden">
+          <TabsList>
+            <TabsTrigger value="todos">Todos</TabsTrigger>
+            <TabsTrigger value="agendado">Pendentes</TabsTrigger>
+            <TabsTrigger value="confirmado">Confirmados</TabsTrigger>
+            <TabsTrigger value="concluido">Concluídos</TabsTrigger>
+            <TabsTrigger value="cancelado">Cancelados</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="todos">
           <Card>
