@@ -271,12 +271,12 @@ export default function AgendamentosPage() {
 
       {/* Tabs de Status - Responsivo */}
       <Tabs defaultValue="todos" className="space-y-4">
-        <TabsList className="!flex !flex-wrap md:!inline-flex h-auto w-full gap-2 p-1 bg-muted">
-          <TabsTrigger value="todos" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0">Todos</TabsTrigger>
-          <TabsTrigger value="agendado" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0">Pendentes</TabsTrigger>
-          <TabsTrigger value="confirmado" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0">Confirmados</TabsTrigger>
-          <TabsTrigger value="concluido" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0">Concluídos</TabsTrigger>
-          <TabsTrigger value="cancelado" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0">Cancelados</TabsTrigger>
+        <TabsList className="!flex !flex-wrap md:!inline-flex h-auto w-full gap-1 p-1 bg-muted">
+          <TabsTrigger value="todos" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Todos</TabsTrigger>
+          <TabsTrigger value="agendado" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Pendentes</TabsTrigger>
+          <TabsTrigger value="confirmado" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Confirmados</TabsTrigger>
+          <TabsTrigger value="concluido" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Concluídos</TabsTrigger>
+          <TabsTrigger value="cancelado" className="flex-1 min-w-[calc(50%-0.25rem)] md:flex-initial md:min-w-0 text-sm px-3 py-1.5">Cancelados</TabsTrigger>
         </TabsList>
 
         <TabsContent value="todos">
