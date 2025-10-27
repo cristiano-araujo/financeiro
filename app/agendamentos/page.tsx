@@ -271,12 +271,12 @@ export default function AgendamentosPage() {
 
       {/* Tabs de Status - Responsivo */}
       <Tabs defaultValue="todos" className="space-y-4">
-        <TabsList className="flex flex-col md:flex-row h-auto md:h-10 w-full md:w-auto items-stretch">
-          <TabsTrigger value="todos" className="justify-start md:justify-center">Todos</TabsTrigger>
-          <TabsTrigger value="agendado" className="justify-start md:justify-center">Pendentes</TabsTrigger>
-          <TabsTrigger value="confirmado" className="justify-start md:justify-center">Confirmados</TabsTrigger>
-          <TabsTrigger value="concluido" className="justify-start md:justify-center">Concluídos</TabsTrigger>
-          <TabsTrigger value="cancelado" className="justify-start md:justify-center">Cancelados</TabsTrigger>
+        <TabsList className="grid grid-cols-1 md:grid-cols-5 h-auto md:h-10 w-full gap-1 md:gap-0 p-1 bg-muted">
+          <TabsTrigger value="todos" className="w-full">Todos</TabsTrigger>
+          <TabsTrigger value="agendado" className="w-full">Pendentes</TabsTrigger>
+          <TabsTrigger value="confirmado" className="w-full">Confirmados</TabsTrigger>
+          <TabsTrigger value="concluido" className="w-full">Concluídos</TabsTrigger>
+          <TabsTrigger value="cancelado" className="w-full">Cancelados</TabsTrigger>
         </TabsList>
 
         <TabsContent value="todos">
