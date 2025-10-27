@@ -99,19 +99,19 @@ export default function AgendamentosPage() {
 
       {/* Tabs de Status */}
       <Tabs defaultValue="todos" className="space-y-4">
-        {/* <TabsList className="flex flex-wrap gap-2 justify-center md:justify-start">
-          <TabsTrigger value="todos" className="flex-1 md:flex-none">Todos</TabsTrigger>
-          <TabsTrigger value="agendado" className="flex-1 md:flex-none">Pendentes</TabsTrigger>
-          <TabsTrigger value="confirmado" className="flex-1 md:flex-none">Confirmados</TabsTrigger>
-          <TabsTrigger value="concluido" className="flex-1 md:flex-none">Concluídos</TabsTrigger>
-          <TabsTrigger value="cancelado" className="flex-1 md:flex-none">Cancelados</TabsTrigger>
+        {/* <TabsList>
+          <TabsTrigger value="todos">Todos</TabsTrigger>
+          <TabsTrigger value="agendado">Pendentes</TabsTrigger>
+          <TabsTrigger value="confirmado">Confirmados</TabsTrigger>
+          <TabsTrigger value="concluido">Concluídos</TabsTrigger>
+          <TabsTrigger value="cancelado">Cancelados</TabsTrigger>
         </TabsList> */}
-        <TabsList className="flex flex-wrap gap-2 justify-center md:justify-start" style={{ flexWrap: 'wrap', overflowX: 'visible' }}>
-          <TabsTrigger value="todos" className="flex-1 md:flex-none min-w-[80px]">Todos</TabsTrigger>
-          <TabsTrigger value="agendado" className="flex-1 md:flex-none min-w-[80px]">Pendentes</TabsTrigger>
-          <TabsTrigger value="confirmado" className="flex-1 md:flex-none min-w-[80px]">Confirmados</TabsTrigger>
-          <TabsTrigger value="concluido" className="flex-1 md:flex-none min-w-[80px]">Concluídos</TabsTrigger>
-          <TabsTrigger value="cancelado" className="flex-1 md:flex-none min-w-[80px]">Cancelados</TabsTrigger>
+         <TabsList className="responsive-tabs-list">
+    <TabsTrigger value="todos">Todos</TabsTrigger>
+    <TabsTrigger value="agendado">Pendentes</TabsTrigger>
+    <TabsTrigger value="confirmado">Confirmados</TabsTrigger>
+    <TabsTrigger value="concluido">Concluídos</TabsTrigger>
+    <TabsTrigger value="cancelado">Cancelados</TabsTrigger>
         </TabsList>
 
         <TabsContent value="todos">

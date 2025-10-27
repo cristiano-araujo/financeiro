@@ -125,3 +125,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Corrige o TabsList do ShadCN para ser responsivo */
+.responsive-tabs-list {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  gap: 0.25rem !important; /* ajuste conforme desejar */
+}
+
+/* Permite que os botões quebrem linha e texto */
+.responsive-tabs-list button[role="tab"] {
+  flex: 1 1 100px !important; /* cresce, encolhe, largura mínima */
+  max-width: 100% !important;
+  white-space: normal !important; /* ← permite quebra de texto */
+  text-align: center !important;
+  min-height: auto !important;
+}
+
+/* Em telas maiores, volta ao normal */
+@media (min-width: 768px) {
+  .responsive-tabs-list {
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+  }
+  .responsive-tabs-list button[role="tab"] {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+}
