@@ -271,7 +271,7 @@ export default function AgendamentosPage() {
 
       {/* Tabs de Status - Responsivo */}
       <Tabs defaultValue="todos" className="space-y-4">
-        <TabsList className="grid grid-cols-1 md:grid-cols-5 h-auto md:h-10 w-full gap-1 md:gap-0 p-1 bg-muted">
+        <TabsList className="grid grid-cols-2 md:grid-cols-5 h-auto w-full gap-2 p-1 bg-muted">
           <TabsTrigger value="todos" className="w-full">Todos</TabsTrigger>
           <TabsTrigger value="agendado" className="w-full">Pendentes</TabsTrigger>
           <TabsTrigger value="confirmado" className="w-full">Confirmados</TabsTrigger>
