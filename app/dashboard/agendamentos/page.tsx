@@ -99,13 +99,22 @@ export default function AgendamentosPage() {
 
       {/* Tabs de Status */}
       <Tabs defaultValue="todos" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="todos">Todos</TabsTrigger>
-          <TabsTrigger value="agendado">Pendentes</TabsTrigger>
-          <TabsTrigger value="confirmado">Confirmados</TabsTrigger>
-          <TabsTrigger value="concluido">Concluídos</TabsTrigger>
-          <TabsTrigger value="cancelado">Cancelados</TabsTrigger>
-        </TabsList>
+        
+        
+
+          <Card className="bg-muted/50 shadow-none border-none">
+  <CardContent className="p-1">
+    <TabsList className="grid grid-cols-3 md:flex md:flex-row gap-2 w-full bg-transparent ">
+      <TabsTrigger value="todos" className="text-xs h-7 w-full flex justify-center">Todos</TabsTrigger>
+      <TabsTrigger value="agendado" className="text-xs h-7 w-full flex justify-center">Pendentes</TabsTrigger>
+      <TabsTrigger value="confirmado" className="text-xs h-7 w-full flex justify-center">Confirmados</TabsTrigger>
+      <TabsTrigger value="concluido" className="text-xs h-7 w-full flex justify-center">Concluídos</TabsTrigger>
+      <TabsTrigger value="cancelado" className="text-xs h-7 w-full flex justify-center">Cancelados</TabsTrigger>
+    </TabsList>
+  </CardContent>
+</Card>
+
+
 
         <TabsContent value="todos">
           <Card>

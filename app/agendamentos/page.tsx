@@ -98,23 +98,21 @@ export default function AgendamentosPage() {
       )}
 
       {/* Tabs de Status */}
-      <Tabs defaultValue="todos" className="space-y-4">
-        {/* <TabsList>
-          <TabsTrigger value="todos">Todos</TabsTrigger>
-          <TabsTrigger value="agendado">Pendentes</TabsTrigger>
-          <TabsTrigger value="confirmado">Confirmados</TabsTrigger>
-          <TabsTrigger value="concluido">Concluídos</TabsTrigger>
-          <TabsTrigger value="cancelado">Cancelados</TabsTrigger>
-        </TabsList> */}
-         <TabsList className="responsive-tabs-list">
-    <TabsTrigger value="todos">Todos</TabsTrigger>
-    <TabsTrigger value="agendado">Pendentes</TabsTrigger>
-    <TabsTrigger value="confirmado">Confirmados</TabsTrigger>
-    <TabsTrigger value="concluido">Concluídos</TabsTrigger>
-    <TabsTrigger value="cancelado">Cancelados</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="todos">
+      
+        <Tabs defaultValue="todos" className="space-y-4">
+          <Card className="bg-muted/50">
+            <CardContent className="p-3">
+              <TabsList className="grid grid-cols-3 md:flex md:flex-row gap-1 w-full">
+                <TabsTrigger value="todos" className="text-xs md:text-sm">Todos</TabsTrigger>
+                <TabsTrigger value="agendado" className="text-xs md:text-sm">Pendentes</TabsTrigger>
+                <TabsTrigger value="confirmado" className="text-xs md:text-sm">Confirmados</TabsTrigger>
+                <TabsTrigger value="concluido" className="text-xs md:text-sm">Concluídos</TabsTrigger>
+                <TabsTrigger value="cancelado" className="text-xs md:text-sm">Cancelados</TabsTrigger>
+              </TabsList>
+            </CardContent>
+          </Card>
+     
+       <TabsContent value="todos">
           <Card>
             <CardHeader>
               <CardTitle>Todos os Agendamentos</CardTitle>

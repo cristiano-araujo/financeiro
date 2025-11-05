@@ -79,10 +79,10 @@ export function AgendamentosChart() {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="data" fontSize={9} angle={-45} textAnchor="end" height={60} />
+              <XAxis dataKey="data" fontSize={9} angle={-45} textAnchor="end" height={30} />
               <YAxis fontSize={10} />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Legend wrapperStyle={{ fontSize: "12px" }} />
+              <Legend wrapperStyle={{ fontSize: "8px" }} />
               <Line type="monotone" dataKey="agendado" stroke="var(--color-agendado)" strokeWidth={2} />
               <Line type="monotone" dataKey="confirmado" stroke="var(--color-confirmado)" strokeWidth={2} />
               <Line type="monotone" dataKey="concluido" stroke="var(--color-concluido)" strokeWidth={2} />
