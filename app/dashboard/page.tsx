@@ -2,6 +2,14 @@
 
 import { useData } from "@/lib/data-context"
 import { PageHeader } from "@/components/page-header"
+import { ExportButton } from "@/components/export-button"
+import { ComissoesList } from "@/components/comissoes-list"
+import { FinanceChart } from "@/components/finance-chart"
+import { AgendamentosChart } from "@/components/agendamentos-chart"
+import { ServicesChart } from "@/components/services-chart"
+import { ComissoesChart } from "@/components/comissoes-chart"
+import { LucroEvolutionChart } from "@/components/lucro-evolution-chart"
+import { ClientesStatusChart } from "@/components/clientes-status-chart"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { DollarSign, TrendingUp, TrendingDown, Target, Users, Calendar, Scissors, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -25,7 +33,19 @@ export default function DashboardPage() {
 
   return (
     <div className="px-2 sm:px-0">
-      <PageHeader title="Dashboard" description="Visão geral do desempenho financeiro da barbearia" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
+        <PageHeader title="Dashboard" description="Visão geral do desempenho financeiro da barbearia" />
+        <ExportButton
+          variant="relatorio-completo"
+          custosFixos={useData().custosFixos}
+          custosVariaveis={useData().custosVariaveis}
+          servicos={servicos}
+          clientes={clientes}
+          agendamentos={agendamentos}
+          financeiro={financeiro}
+          comissoes={useData().calcularComissoes()}
+        />
+      </div>
 
       {/* Alerta de Prejuízo */}
       {isNoPrejuizo && (
@@ -81,12 +101,14 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ponto de Equilíbrio</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Comissões (10%)</CardTitle>
+            <TrendingDown className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl sm:text-2xl font-bold">{financeiro.pontoEquilibrio}</div>
-            <p className="text-xs text-muted-foreground">Serviços para não ter prejuízo</p>
+            <div className="text-xl sm:text-2xl font-bold text-amber-600">R$ {financeiro.totalComissoes.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">
+              A pagar aos {financeiro.comissoes.length} profissional(is)
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -165,6 +187,28 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Comissões List */}
+      <div className="mb-4 sm:mb-8">
+        <ComissoesList />
+      </div>
+
+      {/* Seção de Gráficos */}
+      <div className="mb-4 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4">Análises e Gráficos</h2>
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-4 sm:mb-8">
+          <FinanceChart />
+          <ComissoesChart />
+        </div>
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-4 sm:mb-8">
+          <LucroEvolutionChart />
+          <AgendamentosChart />
+        </div>
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          <ServicesChart />
+          <ClientesStatusChart />
+        </div>
       </div>
     </div>
   )

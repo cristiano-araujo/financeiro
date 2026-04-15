@@ -1,7 +1,8 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import type { CustoFixo, CustoVariavel, Servico, Cliente, Agendamento, CalculoFinanceiro } from "./types"
+import type { CustoFixo, CustoVariavel, Servico, Cliente, Agendamento, CalculoFinanceiro, Comissao } from "./types"
+import { useAuth } from "./auth-context"
 
 interface DataContextType {
   custosFixos: CustoFixo[]
@@ -25,11 +26,14 @@ interface DataContextType {
   updateAgendamento: (id: string, agendamento: Partial<Agendamento>) => void
   deleteAgendamento: (id: string) => void
   calcularFinanceiro: () => CalculoFinanceiro
+  calcularComissoes: () => Comissao[]
+  getDemoUsers: () => Array<{ id: string; name: string; email: string; role: string }>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
 
 export function DataProvider({ children }: { children: ReactNode }) {
+  const { getAllUsers } = useAuth()
   const [custosFixos, setCustosFixos] = useState<CustoFixo[]>([])
   const [custosVariaveis, setCustosVariaveis] = useState<CustoVariavel[]>([])
   const [servicos, setServicos] = useState<Servico[]>([])
@@ -165,6 +169,37 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setAgendamentos(agendamentos.filter((a) => a.id !== id))
   }
 
+  // Calcular comissões (10% por usuário)
+  const calcularComissoes = (): Comissao[] => {
+    const comissoesPorUsuario: { [key: string]: Comissao } = {}
+
+    // Filtra agendamentos concluídos
+    const agendamentosConcluidos = agendamentos.filter((a) => a.status === "concluido")
+
+    agendamentosConcluidos.forEach((agendamento) => {
+      const servico = servicos.find((s) => s.id === agendamento.servicoId)
+      const usuarioId = agendamento.usuarioId
+      const usuarioNome = agendamento.usuarioNome
+
+      if (!comissoesPorUsuario[usuarioId]) {
+        comissoesPorUsuario[usuarioId] = {
+          usuarioId,
+          usuarioNome,
+          totalServicos: 0,
+          somaReceitaServicos: 0,
+          comissao10Porcento: 0,
+        }
+      }
+
+      const preco = servico?.preco || 0
+      comissoesPorUsuario[usuarioId].totalServicos += 1
+      comissoesPorUsuario[usuarioId].somaReceitaServicos += preco
+      comissoesPorUsuario[usuarioId].comissao10Porcento = comissoesPorUsuario[usuarioId].somaReceitaServicos * 0.1
+    })
+
+    return Object.values(comissoesPorUsuario)
+  }
+
   // Cálculos Financeiros
   const calcularFinanceiro = (): CalculoFinanceiro => {
     const totalCustosFixos = custosFixos.reduce((sum, c) => sum + c.valor, 0)
@@ -178,7 +213,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
       return sum + (servico?.preco || 0)
     }, 0)
 
-    const lucroAtual = receitaAtual - custoTotal
+    // Calcular comissões
+    const comissoes = calcularComissoes()
+    const totalComissoes = comissoes.reduce((sum, c) => sum + c.comissao10Porcento, 0)
+
+    const lucroAtual = receitaAtual - custoTotal - totalComissoes
 
     // Preço médio dos serviços
     const precoMedio = servicos.length > 0 ? servicos.reduce((sum, s) => sum + s.preco, 0) / servicos.length : 0
@@ -198,8 +237,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
       metaLucro150,
       receitaAtual,
       lucroAtual,
+      comissoes,
+      totalComissoes,
     }
   }
+
+  const getDemoUsers = () => [
+    { id: "1", name: "João Silva", email: "joao.silva@example.com", role: "admin" },
+    { id: "2", name: "Maria Oliveira", email: "maria.oliveira@example.com", role: "user" },
+    { id: "3", name: "Carlos Santos", email: "carlos.santos@example.com", role: "user" },
+    { id: "4", name: "Ana Costa", email: "ana.costa@example.com", role: "user" },
+    { id: "5", name: "Administrador", email: "admin@barbearia.com", role: "admin" },
+  ]
 
   return (
     <DataContext.Provider
@@ -225,6 +274,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
         updateAgendamento,
         deleteAgendamento,
         calcularFinanceiro,
+        calcularComissoes,
+        getDemoUsers,
       }}
     >
       {children}

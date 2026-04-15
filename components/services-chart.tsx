@@ -3,7 +3,6 @@
 import { useData } from "@/lib/data-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Pie, PieChart, ResponsiveContainer, Cell, Tooltip } from "recharts"
-import { ChartContainer } from "@/components/ui/chart"
 
 export function ServicesChart() {
   const { agendamentos, servicos } = useData()
@@ -56,14 +55,7 @@ export function ServicesChart() {
         <CardDescription className="text-xs sm:text-sm">Distribuição de serviços concluídos</CardDescription>
       </CardHeader>
       <CardContent className="px-2 sm:px-6">
-        <ChartContainer
-          config={{
-            value: {
-              label: "Quantidade",
-            },
-          }}
-          className="h-[200px] sm:h-[300px]"
-        >
+        <div className="h-[200px] sm:h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -83,7 +75,7 @@ export function ServicesChart() {
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
-        </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   )

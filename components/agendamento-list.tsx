@@ -66,6 +66,7 @@ export function AgendamentoList({ filterStatus }: AgendamentoListProps) {
           <TableRow>
             <TableHead>Cliente</TableHead>
             <TableHead>Serviço</TableHead>
+            <TableHead>Profissional</TableHead>
             <TableHead>Data</TableHead>
             <TableHead>Horário</TableHead>
             <TableHead>Status</TableHead>
@@ -77,6 +78,7 @@ export function AgendamentoList({ filterStatus }: AgendamentoListProps) {
             <TableRow key={agendamento.id}>
               <TableCell className="font-medium">{getClienteNome(agendamento.clienteId)}</TableCell>
               <TableCell>{getServicoNome(agendamento.servicoId)}</TableCell>
+              <TableCell className="font-medium">{agendamento.usuarioNome}</TableCell>
               <TableCell>{new Date(agendamento.data).toLocaleDateString("pt-BR")}</TableCell>
               <TableCell>{agendamento.horario}</TableCell>
               <TableCell>{getStatusBadge(agendamento.status)}</TableCell>

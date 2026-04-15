@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useData } from "@/lib/data-context"
 import { PageHeader } from "@/components/page-header"
+import { ExportButton } from "@/components/export-button"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, Scissors, DollarSign, TrendingUp } from "lucide-react"
@@ -23,10 +24,13 @@ export default function ServicosPage() {
         title="Serviços"
         description="Gerencie os serviços oferecidos pela barbearia"
         action={
-          <Button onClick={() => setShowForm(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Novo Serviço
-          </Button>
+          <div className="flex gap-2">
+            <ExportButton variant="servicos" servicos={servicos} />
+            <Button onClick={() => setShowForm(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Serviço
+            </Button>
+          </div>
         }
       />
 

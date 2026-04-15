@@ -2,8 +2,7 @@
 
 import { useData } from "@/lib/data-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Legend, CartesianGrid } from "recharts"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Legend, CartesianGrid, Tooltip } from "recharts"
 
 export function AgendamentosChart() {
   const { agendamentos } = useData()
@@ -55,41 +54,21 @@ export function AgendamentosChart() {
         <CardDescription className="text-xs sm:text-sm">Evolução dos agendamentos nos últimos 14 dias</CardDescription>
       </CardHeader>
       <CardContent className="px-2 sm:px-6">
-        <ChartContainer
-          config={{
-            agendado: {
-              label: "Agendado",
-              color: "hsl(var(--chart-2))",
-            },
-            confirmado: {
-              label: "Confirmado",
-              color: "hsl(var(--chart-1))",
-            },
-            concluido: {
-              label: "Concluído",
-              color: "hsl(var(--chart-4))",
-            },
-            cancelado: {
-              label: "Cancelado",
-              color: "hsl(var(--chart-5))",
-            },
-          }}
-          className="h-[200px] sm:h-[300px]"
-        >
+        <div className="h-[200px] sm:h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="data" fontSize={9} angle={-45} textAnchor="end" height={30} />
               <YAxis fontSize={10} />
-              <ChartTooltip content={<ChartTooltipContent />} />
+              <Tooltip />
               <Legend wrapperStyle={{ fontSize: "8px" }} />
-              <Line type="monotone" dataKey="agendado" stroke="var(--color-agendado)" strokeWidth={2} />
-              <Line type="monotone" dataKey="confirmado" stroke="var(--color-confirmado)" strokeWidth={2} />
-              <Line type="monotone" dataKey="concluido" stroke="var(--color-concluido)" strokeWidth={2} />
-              <Line type="monotone" dataKey="cancelado" stroke="var(--color-cancelado)" strokeWidth={2} />
+              <Line type="monotone" dataKey="agendado" stroke="hsl(var(--chart-2))" strokeWidth={2} />
+              <Line type="monotone" dataKey="confirmado" stroke="hsl(var(--chart-1))" strokeWidth={2} />
+              <Line type="monotone" dataKey="concluido" stroke="hsl(var(--chart-4))" strokeWidth={2} />
+              <Line type="monotone" dataKey="cancelado" stroke="hsl(var(--chart-5))" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
-        </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   )

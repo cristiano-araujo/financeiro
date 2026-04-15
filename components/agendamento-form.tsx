@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { useData } from "@/lib/data-context"
+import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,6 +18,8 @@ interface AgendamentoFormProps {
     id: string
     clienteId: string
     servicoId: string
+    usuarioId: string
+    usuarioNome: string
     data: Date
     horario: string
     status: "agendado" | "confirmado" | "concluido" | "cancelado"
@@ -26,8 +29,12 @@ interface AgendamentoFormProps {
 
 export function AgendamentoForm({ onClose, editingAgendamento }: AgendamentoFormProps) {
   const { addAgendamento, updateAgendamento, clientes, servicos } = useData()
+  const { getAllUsers } = useAuth()
+  const usuarios = getAllUsers()
   const [clienteId, setClienteId] = useState(editingAgendamento?.clienteId || "")
   const [servicoId, setServicoId] = useState(editingAgendamento?.servicoId || "")
+  const [usuarioId, setUsuarioId] = useState(editingAgendamento?.usuarioId || "")
+  const [usuarioNome, setUsuarioNome] = useState(editingAgendamento?.usuarioNome || "")
   const [data, setData] = useState(
     editingAgendamento?.data ? new Date(editingAgendamento.data).toISOString().split("T")[0] : "",
   )
@@ -39,9 +46,16 @@ export function AgendamentoForm({ onClose, editingAgendamento }: AgendamentoForm
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Encontrar o nome do usuário selecionado
+    const usuarioSelecionado = usuarios.find((u) => u.id === usuarioId)
+    const nomeSelecionado = usuarioSelecionado?.name || ""
+
     const agendamentoData = {
       clienteId,
       servicoId,
+      usuarioId,
+      usuarioNome: nomeSelecionado,
       data: new Date(data),
       horario,
       status,
@@ -98,6 +112,22 @@ export function AgendamentoForm({ onClose, editingAgendamento }: AgendamentoForm
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="usuarioId">Profissional que realizará o serviço</Label>
+            <Select value={usuarioId} onValueChange={setUsuarioId} required>
+              <SelectTrigger id="usuarioId">
+                <SelectValue placeholder="Selecione um profissional" />
+              </SelectTrigger>
+              <SelectContent>
+                {usuarios.map((usuario) => (
+                  <SelectItem key={usuario.id} value={usuario.id}>
+                    {usuario.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">

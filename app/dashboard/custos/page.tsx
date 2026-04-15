@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useData } from "@/lib/data-context"
 import { PageHeader } from "@/components/page-header"
+import { ExportButton } from "@/components/export-button"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -27,7 +28,9 @@ export default function CustosPage() {
         title="Gestão de Custos"
         description="Controle seus custos fixos e variáveis"
         action={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <ExportButton variant="custos-fixos" custosFixos={custosFixos} />
+            <ExportButton variant="custos-variaveis" custosVariaveis={custosVariaveis} />
             <Button onClick={() => setShowFixoForm(true)} variant="outline">
               <Plus className="h-4 w-4 mr-2" />
               Custo Fixo

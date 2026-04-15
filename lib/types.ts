@@ -49,11 +49,21 @@ export interface Agendamento {
   id: string
   clienteId: string
   servicoId: string
+  usuarioId: string // ID de quem realizou o serviço
+  usuarioNome: string // Nome do usuário
   data: Date
   horario: string
   status: "agendado" | "confirmado" | "concluido" | "cancelado"
   observacoes?: string
   createdAt: Date
+}
+
+export interface Comissao {
+  usuarioId: string
+  usuarioNome: string
+  totalServicos: number
+  somaReceitaServicos: number
+  comissao10Porcento: number
 }
 
 export interface CalculoFinanceiro {
@@ -64,4 +74,6 @@ export interface CalculoFinanceiro {
   metaLucro150: number
   receitaAtual: number
   lucroAtual: number
+  comissoes: Comissao[]
+  totalComissoes: number
 }
