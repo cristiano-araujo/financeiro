@@ -37,7 +37,8 @@ export function SidebarNav() {
   const { theme, toggleTheme } = useTheme()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  const allNavigation = user?.role === "admin" ? [...navigation, ...adminNavigation] : navigation
+  const filteredNavigation = user?.role === "admin" ? navigation : navigation.filter((item) => item.name !== "Custos")
+  const allNavigation = user?.role === "admin" ? [...filteredNavigation, ...adminNavigation] : filteredNavigation
 
   return (
     <>

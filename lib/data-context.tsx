@@ -43,19 +43,45 @@ export function DataProvider({ children }: { children: ReactNode }) {
   // Carregar dados do localStorage
   useEffect(() => {
     const loadData = () => {
-      const savedCustosFixos = localStorage.getItem("barbershop_custos_fixos")
-      const savedCustosVariaveis = localStorage.getItem("barbershop_custos_variaveis")
-      const savedServicos = localStorage.getItem("barbershop_servicos")
-      const savedClientes = localStorage.getItem("barbershop_clientes")
-      const savedAgendamentos = localStorage.getItem("barbershop_agendamentos")
+      try {
+        console.log("[v0] Sincronizando dados do localStorage...")
+        const savedCustosFixos = localStorage.getItem("barbershop_custos_fixos")
+        const savedCustosVariaveis = localStorage.getItem("barbershop_custos_variaveis")
+        const savedServicos = localStorage.getItem("barbershop_servicos")
+        const savedClientes = localStorage.getItem("barbershop_clientes")
+        const savedAgendamentos = localStorage.getItem("barbershop_agendamentos")
 
-      if (savedCustosFixos) setCustosFixos(JSON.parse(savedCustosFixos))
-      if (savedCustosVariaveis) setCustosVariaveis(JSON.parse(savedCustosVariaveis))
-      if (savedServicos) setServicos(JSON.parse(savedServicos))
-      if (savedClientes) setClientes(JSON.parse(savedClientes))
-      if (savedAgendamentos) setAgendamentos(JSON.parse(savedAgendamentos))
+        if (savedCustosFixos) setCustosFixos(JSON.parse(savedCustosFixos))
+        if (savedCustosVariaveis) setCustosVariaveis(JSON.parse(savedCustosVariaveis))
+        if (savedServicos) setServicos(JSON.parse(savedServicos))
+        if (savedClientes) setClientes(JSON.parse(savedClientes))
+        
+        if (savedAgendamentos) {
+          const parsed = JSON.parse(savedAgendamentos)
+          // Converter strings de data de volta para objetos Date
+          const formatted = parsed.map((a: any) => ({
+            ...a,
+            data: new Date(a.data)
+          }))
+          setAgendamentos(formatted)
+          console.log(`[v0] ${formatted.length} agendamentos carregados.`)
+        }
+      } catch (error) {
+        console.error("[v0] Erro ao carregar dados do DataContext:", error)
+      }
     }
+
     loadData()
+
+    // Sincronizar dados entre abas do mesmo navegador
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key?.startsWith("barbershop_")) {
+        loadData()
+      }
+    }
+
+    window.addEventListener("storage", handleStorageChange)
+    return () => window.removeEventListener("storage", handleStorageChange)
   }, [])
 
   // Salvar dados no localStorage
@@ -169,9 +195,24 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setAgendamentos(agendamentos.filter((a) => a.id !== id))
   }
 
-  // Calcular comissões (10% por usuário)
+  // Calcular comissões (10% por usuário) sincronizado com colaboradores salvos
   const calcularComissoes = (): Comissao[] => {
+    const allUsers = getAllUsers()
     const comissoesPorUsuario: { [key: string]: Comissao } = {}
+
+    // Inicializa com todos os usuários que têm papel de 'user' (colaboradores)
+    // Se quiser que admins também apareçam caso façam serviços, remova o filtro de role
+    allUsers
+      .filter((u) => u.role === "user")
+      .forEach((u) => {
+        comissoesPorUsuario[u.id] = {
+          usuarioId: u.id,
+          usuarioNome: u.name,
+          totalServicos: 0,
+          somaReceitaServicos: 0,
+          comissao10Porcento: 0,
+        }
+      })
 
     // Filtra agendamentos concluídos
     const agendamentosConcluidos = agendamentos.filter((a) => a.status === "concluido")
@@ -179,22 +220,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
     agendamentosConcluidos.forEach((agendamento) => {
       const servico = servicos.find((s) => s.id === agendamento.servicoId)
       const usuarioId = agendamento.usuarioId
-      const usuarioNome = agendamento.usuarioNome
 
-      if (!comissoesPorUsuario[usuarioId]) {
-        comissoesPorUsuario[usuarioId] = {
-          usuarioId,
-          usuarioNome,
-          totalServicos: 0,
-          somaReceitaServicos: 0,
-          comissao10Porcento: 0,
-        }
+      // Só contabiliza se o usuário ainda existir (opcional, mas garante sincronia com 'salvos')
+      if (comissoesPorUsuario[usuarioId]) {
+        const preco = servico?.preco || 0
+        comissoesPorUsuario[usuarioId].totalServicos += 1
+        comissoesPorUsuario[usuarioId].somaReceitaServicos += preco
+        comissoesPorUsuario[usuarioId].comissao10Porcento = comissoesPorUsuario[usuarioId].somaReceitaServicos * 0.1
       }
-
-      const preco = servico?.preco || 0
-      comissoesPorUsuario[usuarioId].totalServicos += 1
-      comissoesPorUsuario[usuarioId].somaReceitaServicos += preco
-      comissoesPorUsuario[usuarioId].comissao10Porcento = comissoesPorUsuario[usuarioId].somaReceitaServicos * 0.1
     })
 
     return Object.values(comissoesPorUsuario)
@@ -243,11 +276,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }
 
   const getDemoUsers = () => [
-    { id: "1", name: "João Silva", email: "joao.silva@example.com", role: "admin" },
-    { id: "2", name: "Maria Oliveira", email: "maria.oliveira@example.com", role: "user" },
-    { id: "3", name: "Carlos Santos", email: "carlos.santos@example.com", role: "user" },
-    { id: "4", name: "Ana Costa", email: "ana.costa@example.com", role: "user" },
-    { id: "5", name: "Administrador", email: "admin@barbearia.com", role: "admin" },
+    { id: "admin-1", name: "Administrador", email: "admin@barbearia.com", role: "admin" },
+    { id: "barbeiro-1", name: "Barbeiro 1", email: "barbeiro1@barbearia.com", role: "user" },
+    { id: "barbeiro-2", name: "Barbeiro 2", email: "barbeiro2@barbearia.com", role: "user" },
+    { id: "barbeiro-3", name: "Barbeiro 3", email: "barbeiro3@barbearia.com", role: "user" },
   ]
 
   return (

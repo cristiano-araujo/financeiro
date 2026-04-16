@@ -104,12 +104,12 @@ export default function AgendamentosPage() {
 
           <Card className="bg-muted/50 shadow-none border-none">
   <CardContent className="p-1">
-    <TabsList className="grid grid-cols-3 md:flex md:flex-row gap-2 w-full bg-transparent ">
-      <TabsTrigger value="todos" className="text-xs h-7 w-full flex justify-center">Todos</TabsTrigger>
-      <TabsTrigger value="agendado" className="text-xs h-7 w-full flex justify-center">Pendentes</TabsTrigger>
-      <TabsTrigger value="confirmado" className="text-xs h-7 w-full flex justify-center">Confirmados</TabsTrigger>
-      <TabsTrigger value="concluido" className="text-xs h-7 w-full flex justify-center">Concluídos</TabsTrigger>
-      <TabsTrigger value="cancelado" className="text-xs h-7 w-full flex justify-center">Cancelados</TabsTrigger>
+    <TabsList className="flex flex-wrap h-auto gap-2 w-full bg-transparent p-0">
+      <TabsTrigger value="todos" className="text-xs h-8 flex-1 min-w-[80px] justify-center bg-muted data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Todos</TabsTrigger>
+      <TabsTrigger value="agendado" className="text-xs h-8 flex-1 min-w-[80px] justify-center bg-muted data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Pendentes</TabsTrigger>
+      <TabsTrigger value="confirmado" className="text-xs h-8 flex-1 min-w-[80px] justify-center bg-muted data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Confirmados</TabsTrigger>
+      <TabsTrigger value="concluido" className="text-xs h-8 flex-1 min-w-[80px] justify-center bg-muted data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Concluídos</TabsTrigger>
+      <TabsTrigger value="cancelado" className="text-xs h-8 flex-1 min-w-[80px] justify-center bg-muted data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Cancelados</TabsTrigger>
     </TabsList>
   </CardContent>
 </Card>

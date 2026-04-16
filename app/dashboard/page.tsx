@@ -1,6 +1,7 @@
 "use client"
 
 import { useData } from "@/lib/data-context"
+import { useAuth } from "@/lib/auth-context"
 import { PageHeader } from "@/components/page-header"
 import { ExportButton } from "@/components/export-button"
 import { ComissoesList } from "@/components/comissoes-list"
@@ -16,7 +17,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export default function DashboardPage() {
   const { calcularFinanceiro, agendamentos, clientes, servicos } = useData()
+  const { user } = useAuth()
   const financeiro = calcularFinanceiro()
+  const isAdmin = user?.role === "admin"
 
   // Estatísticas
   const hoje = new Date()
@@ -48,7 +51,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Alerta de Prejuízo */}
-      {isNoPrejuizo && (
+      {isAdmin && isNoPrejuizo && (
         <Alert variant="destructive" className="mb-4 sm:mb-6">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Atenção: Operação em Prejuízo</AlertTitle>
@@ -61,90 +64,145 @@ export default function DashboardPage() {
 
       {/* Cards Principais - Métricas Financeiras */}
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-4 sm:mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Receita Atual</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold">R$ {financeiro.receitaAtual.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">De {agendamentosConcluidos} atendimentos</p>
-          </CardContent>
-        </Card>
+        {isAdmin ? (
+          <>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Receita Atual</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl sm:text-2xl font-bold">R$ {financeiro.receitaAtual.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground">De {agendamentosConcluidos} atendimentos</p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Custos Totais</CardTitle>
-            <TrendingDown className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold">R$ {financeiro.custoTotal.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
-              Fixos: R$ {financeiro.totalCustosFixos.toFixed(2)} | Variáveis: R${" "}
-              {financeiro.totalCustosVariaveis.toFixed(2)}
-            </p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Custos Totais</CardTitle>
+                <TrendingDown className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl sm:text-2xl font-bold">R$ {financeiro.custoTotal.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground">
+                  Fixos: R$ {financeiro.totalCustosFixos.toFixed(2)} | Variáveis: R${" "}
+                  {financeiro.totalCustosVariaveis.toFixed(2)}
+                </p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Lucro Atual</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className={`text-xl sm:text-2xl font-bold ${isNoPrejuizo ? "text-destructive" : ""}`}>
-              R$ {financeiro.lucroAtual.toFixed(2)}
-            </div>
-            <p className="text-xs text-muted-foreground">{percentualLucro}% sobre os custos</p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Lucro Atual</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className={`text-xl sm:text-2xl font-bold ${isNoPrejuizo ? "text-destructive" : ""}`}>
+                  R$ {financeiro.lucroAtual.toFixed(2)}
+                </div>
+                <p className="text-xs text-muted-foreground">{percentualLucro}% sobre os custos</p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Comissões (10%)</CardTitle>
-            <TrendingDown className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-amber-600">R$ {financeiro.totalComissoes.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
-              A pagar aos {financeiro.comissoes.length} profissional(is)
-            </p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Comissões (10%)</CardTitle>
+                <TrendingDown className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl sm:text-2xl font-bold text-amber-600">R$ {financeiro.totalComissoes.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground">
+                  A pagar aos {financeiro.comissoes.filter(c => c.totalServicos > 0).length} profissional(is) com produção
+                </p>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          <>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Seus Atendimentos</CardTitle>
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl sm:text-2xl font-bold">
+                  {agendamentos.filter((a) => a.usuarioId === user?.id && a.status === "concluido").length}
+                </div>
+                <p className="text-xs text-muted-foreground">Total concluídos</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Sua Comissão estimada</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl sm:text-2xl font-bold text-amber-600">
+                  R$ {useData().calcularComissoes().find(c => c.usuarioId === user?.id)?.comissao10Porcento.toFixed(2) || "0.00"}
+                </div>
+                <p className="text-xs text-muted-foreground">Baseado em 10% da sua produção</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Clientes Atendidos</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl sm:text-2xl font-bold">
+                  {new Set(agendamentos.filter((a) => a.usuarioId === user?.id).map(a => a.clienteId)).size}
+                </div>
+                <p className="text-xs text-muted-foreground">Clientes únicos vinculados a você</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Status</CardTitle>
+                <Target className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl sm:text-2xl font-bold text-green-600">Ativo</div>
+                <p className="text-xs text-muted-foreground">Perfil verificado</p>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
 
       {/* Cards de Metas */}
       <div className="grid gap-3 grid-cols-1 md:grid-cols-2 mb-4 sm:mb-8">
-        <Card className="border-primary/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Target className="h-4 w-4 sm:h-5 sm:w-5" />
-              Meta: 150% de Lucro
-            </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
-              Quantidade de serviços necessários para atingir a meta
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl sm:text-4xl font-bold">{financeiro.metaLucro150}</span>
-                <span className="text-sm text-muted-foreground">serviços</span>
+        {isAdmin && (
+          <Card className="border-primary/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Target className="h-4 w-4 sm:h-5 sm:w-5" />
+                Meta: 150% de Lucro
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
+                Quantidade de serviços necessários para atingir a meta
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl sm:text-4xl font-bold">{financeiro.metaLucro150}</span>
+                  <span className="text-sm text-muted-foreground">serviços</span>
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Faltam {Math.max(0, financeiro.metaLucro150 - agendamentosConcluidos)} atendimentos para atingir a meta
+                </p>
+                <div className="w-full bg-secondary rounded-full h-2 mt-4">
+                  <div
+                    className="bg-primary h-2 rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(100, (agendamentosConcluidos / financeiro.metaLucro150) * 100)}%`,
+                    }}
+                  />
+                </div>
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                Faltam {Math.max(0, financeiro.metaLucro150 - agendamentosConcluidos)} atendimentos para atingir a meta
-              </p>
-              <div className="w-full bg-secondary rounded-full h-2 mt-4">
-                <div
-                  className="bg-primary h-2 rounded-full transition-all"
-                  style={{
-                    width: `${Math.min(100, (agendamentosConcluidos / financeiro.metaLucro150) * 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>
@@ -195,21 +253,23 @@ export default function DashboardPage() {
       </div>
 
       {/* Seção de Gráficos */}
-      <div className="mb-4 sm:mb-8">
-        <h2 className="text-xl sm:text-2xl font-bold mb-4">Análises e Gráficos</h2>
-        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-4 sm:mb-8">
-          <FinanceChart />
-          <ComissoesChart />
+      {isAdmin && (
+        <div className="mb-4 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4">Análises e Gráficos</h2>
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-4 sm:mb-8">
+            <FinanceChart />
+            <ComissoesChart />
+          </div>
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-4 sm:mb-8">
+            <LucroEvolutionChart />
+            <AgendamentosChart />
+          </div>
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+            <ServicesChart />
+            <ClientesStatusChart />
+          </div>
         </div>
-        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-4 sm:mb-8">
-          <LucroEvolutionChart />
-          <AgendamentosChart />
-        </div>
-        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-          <ServicesChart />
-          <ClientesStatusChart />
-        </div>
-      </div>
+      )}
     </div>
   )
 }
