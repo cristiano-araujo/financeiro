@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import type { CustoFixo, CustoVariavel, Servico, Cliente, Agendamento, CalculoFinanceiro, Comissao } from "./types"
+import type { CustoFixo, CustoVariavel, Servico, Cliente, Agendamento, CalculoFinanceiro, Comissao, Configuracao } from "./types"
 import { useAuth } from "./auth-context"
 
 interface DataContextType {
@@ -27,6 +27,8 @@ interface DataContextType {
   deleteAgendamento: (id: string) => void
   calcularFinanceiro: () => CalculoFinanceiro
   calcularComissoes: () => Comissao[]
+  configuracao: Configuracao
+  updateConfiguracao: (config: Configuracao) => void
   getDemoUsers: () => Array<{ id: string; name: string; email: string; role: string }>
 }
 
@@ -39,6 +41,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [servicos, setServicos] = useState<Servico[]>([])
   const [clientes, setClientes] = useState<Cliente[]>([])
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([])
+  const [configuracao, setConfiguracao] = useState<Configuracao>({ percentualComissao: 10 })
 
   // Carregar dados do localStorage
   useEffect(() => {
@@ -50,11 +53,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const savedServicos = localStorage.getItem("barbershop_servicos")
         const savedClientes = localStorage.getItem("barbershop_clientes")
         const savedAgendamentos = localStorage.getItem("barbershop_agendamentos")
+        const savedConfiguracao = localStorage.getItem("barbershop_configuracao")
 
         if (savedCustosFixos) setCustosFixos(JSON.parse(savedCustosFixos))
         if (savedCustosVariaveis) setCustosVariaveis(JSON.parse(savedCustosVariaveis))
         if (savedServicos) setServicos(JSON.parse(savedServicos))
         if (savedClientes) setClientes(JSON.parse(savedClientes))
+        if (savedConfiguracao) setConfiguracao(JSON.parse(savedConfiguracao))
         
         if (savedAgendamentos) {
           const parsed = JSON.parse(savedAgendamentos)
@@ -104,6 +109,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem("barbershop_agendamentos", JSON.stringify(agendamentos))
   }, [agendamentos])
+
+  useEffect(() => {
+    localStorage.setItem("barbershop_configuracao", JSON.stringify(configuracao))
+  }, [configuracao])
 
   // CRUD Custos Fixos
   const addCustoFixo = (custo: Omit<CustoFixo, "id" | "createdAt">) => {
@@ -195,6 +204,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setAgendamentos(agendamentos.filter((a) => a.id !== id))
   }
 
+  const updateConfiguracao = (config: Configuracao) => {
+    setConfiguracao(config)
+  }
+
   // Calcular comissões (10% por usuário) sincronizado com colaboradores salvos
   const calcularComissoes = (): Comissao[] => {
     const allUsers = getAllUsers()
@@ -210,7 +223,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
           usuarioNome: u.name,
           totalServicos: 0,
           somaReceitaServicos: 0,
-          comissao10Porcento: 0,
+          valorComissao: 0,
+          percentualAplicado: configuracao.percentualComissao,
         }
       })
 
@@ -226,7 +240,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const preco = servico?.preco || 0
         comissoesPorUsuario[usuarioId].totalServicos += 1
         comissoesPorUsuario[usuarioId].somaReceitaServicos += preco
-        comissoesPorUsuario[usuarioId].comissao10Porcento = comissoesPorUsuario[usuarioId].somaReceitaServicos * 0.1
+        
+        // Priorizar a comissão do serviço, se definida, caso contrário usar a global
+        const percentualValor = servico?.comissao !== undefined ? servico.comissao : configuracao.percentualComissao
+        const percentual = percentualValor / 100
+        
+        // Acumular o valor da comissão (pode variar por serviço)
+        const valorDesteServico = preco * percentual
+        comissoesPorUsuario[usuarioId].valorComissao += valorDesteServico
+        
+        // O percentual aplicado para exibição pode ser uma média ou o último, 
+        // mas aqui vamos manter a indicação de que é variável ou usar o global como base
+        comissoesPorUsuario[usuarioId].percentualAplicado = percentualValor
       }
     })
 
@@ -248,7 +273,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     // Calcular comissões
     const comissoes = calcularComissoes()
-    const totalComissoes = comissoes.reduce((sum, c) => sum + c.comissao10Porcento, 0)
+    const totalComissoes = comissoes.reduce((sum, c) => sum + c.valorComissao, 0)
 
     const lucroAtual = receitaAtual - custoTotal - totalComissoes
 
@@ -307,6 +332,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
         deleteAgendamento,
         calcularFinanceiro,
         calcularComissoes,
+        configuracao,
+        updateConfiguracao,
         getDemoUsers,
       }}
     >

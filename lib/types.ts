@@ -31,6 +31,7 @@ export interface Servico {
   descricao: string
   preco: number
   duracao: number // em minutos
+  comissao?: number // em percentual (opcional)
   ativo: boolean
   createdAt: Date
 }
@@ -63,7 +64,12 @@ export interface Comissao {
   usuarioNome: string
   totalServicos: number
   somaReceitaServicos: number
-  comissao10Porcento: number
+  valorComissao: number
+  percentualAplicado: number
+}
+
+export interface Configuracao {
+  percentualComissao: number
 }
 
 export interface CalculoFinanceiro {

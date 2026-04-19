@@ -29,12 +29,15 @@ interface AgendamentoFormProps {
 
 export function AgendamentoForm({ onClose, editingAgendamento }: AgendamentoFormProps) {
   const { addAgendamento, updateAgendamento, clientes, servicos } = useData()
-  const { getAllUsers } = useAuth()
-  const usuarios = getAllUsers()
+  const { getAllUsers, user } = useAuth()
+  const allUsers = getAllUsers()
+  const isAdmin = user?.role === "admin"
+  // Funcionário vê apenas ele mesmo; admin vê todos
+  const usuarios = isAdmin ? allUsers : allUsers.filter((u) => u.id === user?.id)
   const [clienteId, setClienteId] = useState(editingAgendamento?.clienteId || "")
   const [servicoId, setServicoId] = useState(editingAgendamento?.servicoId || "")
-  const [usuarioId, setUsuarioId] = useState(editingAgendamento?.usuarioId || "")
-  const [usuarioNome, setUsuarioNome] = useState(editingAgendamento?.usuarioNome || "")
+  const [usuarioId, setUsuarioId] = useState(editingAgendamento?.usuarioId || user?.id || "")
+  const [usuarioNome, setUsuarioNome] = useState(editingAgendamento?.usuarioNome || user?.name || "")
   const [data, setData] = useState(
     editingAgendamento?.data ? new Date(editingAgendamento.data).toISOString().split("T")[0] : "",
   )

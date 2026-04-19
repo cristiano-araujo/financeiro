@@ -5,13 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend, Tooltip } from "recharts"
 
 export function ComissoesChart() {
-  const { calcularComissoes } = useData()
+  const { calcularComissoes, configuracao } = useData()
   const comissoes = calcularComissoes()
 
   const data = comissoes.map((c) => ({
     profissional: c.usuarioNome,
     receita: c.somaReceitaServicos,
-    comissao: c.comissao10Porcento,
+    comissao: c.valorComissao,
   }))
 
   if (data.length === 0) {
@@ -32,7 +32,7 @@ export function ComissoesChart() {
     <Card>
       <CardHeader>
         <CardTitle className="text-base sm:text-lg">Receita por Profissional</CardTitle>
-        <CardDescription className="text-xs sm:text-sm">Receita gerada e comissões (10%) por profissional</CardDescription>
+        <CardDescription className="text-xs sm:text-sm">Receita gerada e comissões por profissional</CardDescription>
       </CardHeader>
       <CardContent className="px-2 sm:px-6 pb-2 overflow-hidden">
         <div className="h-[200px] sm:h-[300px]">

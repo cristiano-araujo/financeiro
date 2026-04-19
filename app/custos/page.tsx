@@ -11,10 +11,14 @@ import { CustoFixoForm } from "@/components/custo-fixo-form"
 import { CustoVariavelForm } from "@/components/custo-variavel-form"
 import { CustoFixoList } from "@/components/custo-fixo-list"
 import { CustoVariavelList } from "@/components/custo-variavel-list"
+import { ConfiguracaoForm } from "@/components/configuracao-form"
+import { useAuth } from "@/lib/auth-context"
 
 export default function CustosPage() {
-  const { calcularFinanceiro } = useData()
+  const { calcularFinanceiro, configuracao } = useData()
+  const { user } = useAuth()
   const [showFixoForm, setShowFixoForm] = useState(false)
+  const isAdmin = user?.role === "admin"
   const [showVariavelForm, setShowVariavelForm] = useState(false)
 
   const financeiro = calcularFinanceiro()
@@ -67,6 +71,7 @@ export default function CustosPage() {
         <TabsList>
           <TabsTrigger value="fixos">Custos Fixos</TabsTrigger>
           <TabsTrigger value="variaveis">Custos Variáveis</TabsTrigger>
+          {isAdmin && <TabsTrigger value="configuracao">Configuração de Comissão</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="fixos" className="space-y-4">
@@ -118,6 +123,22 @@ export default function CustosPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {isAdmin && (
+          <TabsContent value="configuracao" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Configuração de Comissão</CardTitle>
+                <CardDescription>
+                  Defina o percentual de comissão pago aos profissionais (Atualmente: {configuracao.percentualComissao}%)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ConfiguracaoForm />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   )

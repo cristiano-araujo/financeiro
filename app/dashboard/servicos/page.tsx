@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useData } from "@/lib/data-context"
+import { useAuth } from "@/lib/auth-context"
 import { PageHeader } from "@/components/page-header"
 import { ExportButton } from "@/components/export-button"
 import { Button } from "@/components/ui/button"
@@ -12,7 +13,9 @@ import { ServicoList } from "@/components/servico-list"
 
 export default function ServicosPage() {
   const { servicos } = useData()
+  const { user } = useAuth()
   const [showForm, setShowForm] = useState(false)
+  const isAdmin = user?.role === "admin"
 
   const servicosAtivos = servicos.filter((s) => s.ativo)
   const valorMedio =
@@ -26,10 +29,12 @@ export default function ServicosPage() {
         action={
           <div className="flex gap-2">
             <ExportButton variant="servicos" servicos={servicos} />
-            <Button onClick={() => setShowForm(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Serviço
-            </Button>
+            {isAdmin && (
+              <Button onClick={() => setShowForm(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Serviço
+              </Button>
+            )}
           </div>
         }
       />

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 export function ComissoesList() {
-  const { calcularComissoes } = useData()
+  const { calcularComissoes, configuracao } = useData()
   const { user } = useAuth()
   
   const allComissoes = calcularComissoes()
@@ -20,8 +20,8 @@ export function ComissoesList() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Comissões (10%)</CardTitle>
-          <CardDescription>Comissões geradas pelos serviços concluídos</CardDescription>
+          <CardTitle>Comissões</CardTitle>
+          <CardDescription>Comissões geradas pelos serviços concluídos (Base global: {configuracao.percentualComissao}%)</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">Nenhuma comissão registrada ainda.</p>
@@ -30,14 +30,14 @@ export function ComissoesList() {
     )
   }
 
-  const totalComissoes = comissoes.reduce((sum, c) => sum + c.comissao10Porcento, 0)
+  const totalComissoes = comissoes.reduce((sum, c) => sum + c.valorComissao, 0)
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{isAdmin ? "Comissões (10%)" : "Sua Produção e Comissão"}</CardTitle>
+        <CardTitle>{isAdmin ? "Relatório de Comissões" : "Sua Produção e Comissão"}</CardTitle>
         <CardDescription>
-          {isAdmin ? "Comissões geradas pelos serviços concluídos" : "Resumo da sua produção e comissão acumulada"}
+          {isAdmin ? "Comissões calculadas com base no serviço ou taxa global" : `Resumo da sua produção e comissão acumulada`}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -48,7 +48,7 @@ export function ComissoesList() {
                 <TableHead>Profissional</TableHead>
                 <TableHead className="text-right">Serviços</TableHead>
                 <TableHead className="text-right">Receita</TableHead>
-                <TableHead className="text-right">Comissão (10%)</TableHead>
+                <TableHead className="text-right">Total Comissão</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -58,7 +58,7 @@ export function ComissoesList() {
                   <TableCell className="text-right">{comissao.totalServicos}</TableCell>
                   <TableCell className="text-right">R$ {comissao.somaReceitaServicos.toFixed(2)}</TableCell>
                   <TableCell className="text-right font-semibold text-amber-600">
-                    R$ {comissao.comissao10Porcento.toFixed(2)}
+                    R$ {comissao.valorComissao.toFixed(2)}
                   </TableCell>
                 </TableRow>
               ))}

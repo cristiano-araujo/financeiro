@@ -101,12 +101,11 @@ export function generateRelatorioFinanceiro(
 
   // 7. Comissões
   const comissoesData = comissoes.map(comissao => ({
-    'Funcionário': comissao.funcionarioNome,
-    'Serviço': comissao.servicoNome,
-    'Valor do Serviço': comissao.valorServico,
-    'Comissão (%)': comissao.percentualComissao,
+    'Profissional': comissao.usuarioNome,
+    'Total de Serviços': comissao.totalServicos,
+    'Receita Gerada': comissao.somaReceitaServicos,
+    'Percentual Aplicado (%)': comissao.percentualAplicado,
     'Valor da Comissão': comissao.valorComissao,
-    'Data': comissao.data ? new Date(comissao.data).toLocaleDateString('pt-BR') : ''
   }))
   const wsComissoes = XLSX.utils.json_to_sheet(comissoesData)
   XLSX.utils.book_append_sheet(wb, wsComissoes, 'Comissões')

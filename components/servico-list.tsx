@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useData } from "@/lib/data-context"
+import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -11,7 +12,9 @@ import type { Servico } from "@/lib/types"
 
 export function ServicoList() {
   const { servicos, deleteServico } = useData()
+  const { user } = useAuth()
   const [editingServico, setEditingServico] = useState<Servico | null>(null)
+  const isAdmin = user?.role === "admin"
 
   if (servicos.length === 0) {
     return <div className="text-center py-8 text-muted-foreground">Nenhum serviço cadastrado</div>
@@ -30,8 +33,9 @@ export function ServicoList() {
             <TableHead>Descrição</TableHead>
             <TableHead className="text-right">Preço</TableHead>
             <TableHead className="text-right">Duração</TableHead>
+            <TableHead className="text-right">Comissão</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Ações</TableHead>
+            {isAdmin && <TableHead className="text-right">Ações</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -41,19 +45,22 @@ export function ServicoList() {
               <TableCell className="max-w-xs truncate">{servico.descricao}</TableCell>
               <TableCell className="text-right">R$ {servico.preco.toFixed(2)}</TableCell>
               <TableCell className="text-right">{servico.duracao} min</TableCell>
+              <TableCell className="text-right">{servico.comissao !== undefined ? `${servico.comissao}%` : "Global"}</TableCell>
               <TableCell>
                 <Badge variant={servico.ativo ? "default" : "secondary"}>{servico.ativo ? "Ativo" : "Inativo"}</Badge>
               </TableCell>
-              <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
-                  <Button size="icon" variant="ghost" onClick={() => setEditingServico(servico)}>
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button size="icon" variant="ghost" onClick={() => deleteServico(servico.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
+              {isAdmin && (
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button size="icon" variant="ghost" onClick={() => setEditingServico(servico)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" variant="ghost" onClick={() => deleteServico(servico.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

@@ -19,6 +19,7 @@ interface ServicoFormProps {
     descricao: string
     preco: number
     duracao: number
+    comissao?: number
     ativo: boolean
   }
 }
@@ -29,6 +30,7 @@ export function ServicoForm({ onClose, editingServico }: ServicoFormProps) {
   const [descricao, setDescricao] = useState(editingServico?.descricao || "")
   const [preco, setPreco] = useState(editingServico?.preco.toString() || "")
   const [duracao, setDuracao] = useState(editingServico?.duracao.toString() || "")
+  const [comissao, setComissao] = useState(editingServico?.comissao?.toString() || "")
   const [ativo, setAtivo] = useState(editingServico?.ativo ?? true)
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,6 +40,7 @@ export function ServicoForm({ onClose, editingServico }: ServicoFormProps) {
       descricao,
       preco: Number.parseFloat(preco),
       duracao: Number.parseInt(duracao),
+      comissao: comissao ? Number.parseFloat(comissao) : undefined,
       ativo,
     }
 
@@ -89,6 +92,17 @@ export function ServicoForm({ onClose, editingServico }: ServicoFormProps) {
                 value={duracao}
                 onChange={(e) => setDuracao(e.target.value)}
                 required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="comissao">Comissão (%) - Opcional</Label>
+              <Input
+                id="comissao"
+                type="number"
+                step="0.5"
+                placeholder="Ex: 10 (Deixe vazio para usar global)"
+                value={comissao}
+                onChange={(e) => setComissao(e.target.value)}
               />
             </div>
             <div className="space-y-2">
