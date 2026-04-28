@@ -22,6 +22,20 @@ export const db = {
     }
   },
 
+  updateBusiness: async (id: string, updates: Partial<Business>): Promise<boolean> => {
+    const supabaseUpdates: any = {}
+    if (updates.name) supabaseUpdates.name = updates.name
+    if (updates.aiPersonality) supabaseUpdates.ai_personality = updates.aiPersonality
+    if (updates.settings) supabaseUpdates.settings = updates.settings
+
+    const { error } = await supabase
+      .from('businesses')
+      .update(supabaseUpdates)
+      .eq('id', id)
+    
+    return !error
+  },
+
   // --- CLIENTS ---
   getClients: async (): Promise<Client[]> => {
     const { data, error } = await supabase
@@ -106,6 +120,8 @@ export const db = {
       professionalId: item.professional_id,
       status: item.status,
       date: item.date ? new Date(item.date) : undefined,
+      startTime: item.start_time,
+      endTime: item.end_time,
       notes: item.notes,
       aiSummary: item.ai_summary,
       createdAt: new Date(item.created_at),
@@ -122,5 +138,59 @@ export const db = {
       .eq('id', id)
     
     return !error
+  },
+
+  // --- DASHBOARD ---
+  getDashboardStats: async () => {
+    // 1. Get total leads (all appointments or clients)
+    const { count: totalLeads } = await supabase
+      .from('clients')
+      .select('*', { count: 'exact', head: true })
+
+    // 2. Get total revenue from completed appointments
+    const { data: revenueData } = await supabase
+      .from('appointments')
+      .select('services(price)')
+      .eq('status', 'completed')
+    
+    const totalRevenue = revenueData?.reduce((acc, curr: any) => acc + (curr.services?.price || 0), 0) || 0
+
+    // 3. Get conversion rate (scheduled/completed vs total)
+    const { count: convertedCount } = await supabase
+      .from('appointments')
+      .select('*', { count: 'exact', head: true })
+      .in('status', ['scheduled', 'completed'])
+    
+    const { count: totalAppointments } = await supabase
+      .from('appointments')
+      .select('*', { count: 'exact', head: true })
+    
+    const conversionRate = totalAppointments ? Math.round((convertedCount! / totalAppointments) * 100) : 0
+
+    return {
+      totalLeads: totalLeads || 0,
+      totalRevenue,
+      conversionRate
+    }
+  },
+
+  getWeeklyAppointments: async () => {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select('created_at')
+      .order('created_at', { ascending: true })
+
+    if (error) return []
+
+    // Map to days of the week (Seg, Ter, Qua, etc)
+    const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+    const counts: { [key: string]: number } = { 'Seg': 0, 'Ter': 0, 'Qua': 0, 'Qui': 0, 'Sex': 0, 'Sáb': 0, 'Dom': 0 }
+
+    data.forEach(item => {
+      const day = days[new Date(item.created_at).getDay()]
+      counts[day]++
+    })
+
+    return Object.entries(counts).map(([name, agendamentos]) => ({ name, agendamentos }))
   }
 }

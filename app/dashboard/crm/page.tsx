@@ -4,8 +4,8 @@ import { useState, useEffect } from "react"
 import { db } from "@/lib/db"
 import { Appointment } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { 
   Bot, 
   User, 

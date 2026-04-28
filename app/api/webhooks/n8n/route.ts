@@ -1,10 +1,21 @@
 import { NextResponse } from "next/server"
-import { supabaseAdmin } from "@/lib/supabase"
+import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
   try {
+    // Initialize admin client ONLY when the request happens
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+       console.error("Supabase Admin keys missing at runtime")
+       return NextResponse.json({ error: "Server configuration error" }, { status: 500 })
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+
     const body = await req.json()
     const { name, phone, summary, businessId } = body
 
