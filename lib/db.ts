@@ -1,61 +1,126 @@
-import { Client, Service, Appointment, Professional, Business, Expense } from "./types"
+import { supabase } from "./supabase"
+import { Client, Service, Appointment, Business } from "./types"
 
-// Mock Initial Data
-const INITIAL_BUSINESS: Business = {
-  id: "1",
-  name: "Clínica & Bem Estar",
-  type: "clinic",
-  aiPersonality: "Beatriz, secretária educada e eficiente.",
-  settings: {},
-  createdAt: new Date(),
-}
-
-const INITIAL_SERVICES: Service[] = [
-  { id: "s1", name: "Consulta Geral", description: "Avaliação inicial", price: 250, duration: 30, isActive: true, businessId: "1", createdAt: new Date() },
-  { id: "s2", name: "Limpeza de Pele", description: "Tratamento facial", price: 180, duration: 60, isActive: true, businessId: "1", createdAt: new Date() },
-]
-
-const INITIAL_PROFESSIONALS: Professional[] = [
-  { id: "p1", name: "Dra. Ana Paula", role: "Dermatologista", email: "ana@clinica.com", isActive: true, businessId: "1", createdAt: new Date() },
-  { id: "p2", name: "Dra. Julia Costa", role: "Esteticista", email: "julia@clinica.com", isActive: true, businessId: "1", createdAt: new Date() },
-]
-
-const INITIAL_CLIENTS: Client[] = [
-  { id: "c1", name: "João Silva", phone: "(11) 98888-1111", email: "joao@email.com", businessId: "1", createdAt: new Date(), aiSummary: "Cliente recorrente, prefere horários pela manhã." },
-  { id: "c2", name: "Maria Oliveira", phone: "(11) 97777-2222", businessId: "1", createdAt: new Date(), aiSummary: "Interessada em tratamentos faciais." },
-]
-
-// Mock DB Service
+// Centralized DB Service using Supabase
 export const db = {
-  getBusiness: () => INITIAL_BUSINESS,
-  
-  getClients: (): Client[] => {
-    if (typeof window === "undefined") return INITIAL_CLIENTS
-    const saved = localStorage.getItem("aicrm_clients")
-    return saved ? JSON.parse(saved) : INITIAL_CLIENTS
-  },
-  
-  saveClients: (clients: Client[]) => {
-    localStorage.setItem("aicrm_clients", JSON.stringify(clients))
-  },
-
-  getServices: (): Service[] => {
-    if (typeof window === "undefined") return INITIAL_SERVICES
-    const saved = localStorage.getItem("aicrm_services")
-    return saved ? JSON.parse(saved) : INITIAL_SERVICES
-  },
-  
-  saveServices: (services: Service[]) => {
-    localStorage.setItem("aicrm_services", JSON.stringify(services))
+  // --- BUSINESS ---
+  getBusiness: async (id: string = '74888888-4444-4444-4444-888888888888'): Promise<Business | null> => {
+    const { data, error } = await supabase
+      .from('businesses')
+      .select('*')
+      .eq('id', id)
+      .single()
+    
+    if (error) return null
+    return {
+      id: data.id,
+      name: data.name,
+      type: data.type,
+      aiPersonality: data.ai_personality,
+      settings: data.settings,
+      createdAt: new Date(data.created_at)
+    }
   },
 
-  getAppointments: (): Appointment[] => {
-    if (typeof window === "undefined") return []
-    const saved = localStorage.getItem("aicrm_appointments")
-    return saved ? JSON.parse(saved) : []
+  // --- CLIENTS ---
+  getClients: async (): Promise<Client[]> => {
+    const { data, error } = await supabase
+      .from('clients')
+      .select('*')
+      .order('created_at', { ascending: false })
+    
+    if (error) return []
+    return data.map(item => ({
+      id: item.id,
+      name: item.name,
+      phone: item.phone,
+      email: item.email,
+      businessId: item.business_id,
+      aiSummary: item.ai_summary,
+      createdAt: new Date(item.created_at)
+    }))
   },
-  
-  saveAppointments: (appointments: Appointment[]) => {
-    localStorage.setItem("aicrm_appointments", JSON.stringify(appointments))
+
+  addClient: async (client: Omit<Client, "id" | "createdAt">): Promise<boolean> => {
+    const { error } = await supabase
+      .from('clients')
+      .insert([{
+        name: client.name,
+        phone: client.phone,
+        email: client.email,
+        business_id: client.businessId,
+        ai_summary: client.aiSummary
+      }])
+    
+    return !error
   },
+
+  // --- SERVICES ---
+  getServices: async (): Promise<Service[]> => {
+    const { data, error } = await supabase
+      .from('services')
+      .select('*')
+      .order('name')
+    
+    if (error) return []
+    return data.map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      price: Number(item.price),
+      duration: item.duration,
+      isActive: item.is_active,
+      businessId: item.business_id,
+      createdAt: new Date(item.created_at)
+    }))
+  },
+
+  addService: async (service: Omit<Service, "id" | "createdAt">): Promise<boolean> => {
+    const { error } = await supabase
+      .from('services')
+      .insert([{
+        name: service.name,
+        description: service.description,
+        price: service.price,
+        duration: service.duration,
+        is_active: service.isActive,
+        business_id: service.businessId
+      }])
+    
+    return !error
+  },
+
+  // --- APPOINTMENTS (CRM CARDS) ---
+  getAppointments: async (): Promise<Appointment[]> => {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select('*, clients(name), services(name)')
+      .order('created_at', { ascending: false })
+    
+    if (error) return []
+    return data.map(item => ({
+      id: item.id,
+      businessId: item.business_id,
+      clientId: item.client_id,
+      serviceId: item.service_id,
+      professionalId: item.professional_id,
+      status: item.status,
+      date: item.date ? new Date(item.date) : undefined,
+      notes: item.notes,
+      aiSummary: item.ai_summary,
+      createdAt: new Date(item.created_at),
+      // Computed fields for UI convenience
+      clientName: item.clients?.name,
+      serviceName: item.services?.name
+    }))
+  },
+
+  updateAppointmentStatus: async (id: string, status: string): Promise<boolean> => {
+    const { error } = await supabase
+      .from('appointments')
+      .update({ status })
+      .eq('id', id)
+    
+    return !error
+  }
 }

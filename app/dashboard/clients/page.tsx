@@ -23,7 +23,8 @@ import {
   Calendar,
   Sparkles,
   Filter,
-  Download
+  Download,
+  Loader2
 } from "lucide-react"
 import {
   Dialog,
@@ -41,34 +42,43 @@ export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [isAddingClient, setIsAddingClient] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    setClients(db.getClients())
+    loadClients()
   }, [])
+
+  const loadClients = async () => {
+    setIsLoading(true)
+    const data = await db.getClients()
+    setClients(data)
+    setIsLoading(false)
+  }
 
   const filteredClients = clients.filter(c => 
     c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.phone.includes(searchTerm)
   )
 
-  const handleAddClient = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAddClient = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    const newClient: Client = {
-      id: Date.now().toString(),
+    
+    const success = await db.addClient({
       name: formData.get("name") as string,
       phone: formData.get("phone") as string,
       email: formData.get("email") as string,
-      businessId: "1",
-      createdAt: new Date(),
-      aiSummary: "Novo cliente cadastrado manualmente."
-    }
+      businessId: "74888888-4444-4444-4444-888888888888",
+      aiSummary: "Novo cliente cadastrado manualmente via Dashboard."
+    })
     
-    const updated = [...clients, newClient]
-    setClients(updated)
-    db.saveClients(updated)
-    setIsAddingClient(false)
-    toast.success("Cliente cadastrado com sucesso!")
+    if (success) {
+      toast.success("Cliente cadastrado no Supabase!")
+      setIsAddingClient(false)
+      loadClients()
+    } else {
+      toast.error("Erro ao cadastrar cliente.")
+    }
   }
 
   return (
@@ -79,13 +89,13 @@ export default function ClientsPage() {
             Gestão de Clientes
           </h2>
           <p className="text-muted-foreground">
-            Sua base de dados inteligente com perfis psicográficos por IA.
+            Base de dados conectada em tempo real ao Supabase.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2 h-9">
+          <Button variant="outline" size="sm" className="gap-2 h-9" onClick={loadClients}>
             <Download className="h-4 w-4" />
-            Exportar
+            Atualizar
           </Button>
           <Dialog open={isAddingClient} onOpenChange={setIsAddingClient}>
             <DialogTrigger asChild>
@@ -98,7 +108,7 @@ export default function ClientsPage() {
               <DialogHeader>
                 <DialogTitle>Cadastrar Cliente</DialogTitle>
                 <DialogDescription>
-                  Adicione um novo cliente à sua base. A IA Beatriz fará o primeiro contato automaticamente se configurado.
+                  Os dados serão salvos permanentemente no seu banco de dados Supabase.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleAddClient} className="grid gap-4 py-4">
@@ -115,7 +125,7 @@ export default function ClientsPage() {
                   <Input id="email" name="email" type="email" placeholder="rodrigo@email.com" />
                 </div>
                 <DialogFooter className="mt-4">
-                  <Button type="submit" className="w-full">Salvar Cliente</Button>
+                  <Button type="submit" className="w-full">Salvar no Banco</Button>
                 </DialogFooter>
               </form>
             </DialogContent>
@@ -153,65 +163,71 @@ export default function ClientsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredClients.map((client) => (
-                  <TableRow key={client.id} className="hover:bg-primary/5 transition-colors group">
-                    <TableCell className="font-medium py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary font-bold shadow-inner group-hover:scale-110 transition-transform">
-                          {client.name.charAt(0)}
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-bold">{client.name}</span>
-                          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">ID: {client.id.slice(0, 5)}</span>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-1.5 text-xs">
-                        <span className="flex items-center gap-1.5 text-foreground font-medium">
-                          <Phone className="h-3 w-3 text-primary" /> {client.phone}
-                        </span>
-                        {client.email && (
-                          <span className="flex items-center gap-1.5 text-muted-foreground">
-                            <Mail className="h-3 w-3" /> {client.email}
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {client.aiSummary ? (
-                        <div className="flex items-start gap-2 bg-primary/5 p-2.5 rounded-xl border border-primary/10 max-w-[320px] group-hover:bg-primary/10 transition-colors">
-                          <Sparkles className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5 animate-pulse" />
-                          <p className="text-[11px] text-muted-foreground italic leading-relaxed">
-                            {client.aiSummary}
-                          </p>
-                        </div>
-                      ) : (
-                        <span className="text-xs text-muted-foreground italic">Processando perfil...</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell text-muted-foreground text-xs">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 opacity-50" />
-                        {new Date(client.createdAt).toLocaleDateString("pt-BR")}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right pr-6">
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-primary/10 hover:text-primary">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {filteredClients.length === 0 && (
+                {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={5} className="h-32 text-center">
-                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                        <Search className="h-8 w-8 opacity-20" />
-                        <p className="text-sm">Nenhum cliente encontrado.</p>
+                      <div className="flex flex-col items-center gap-2 text-primary">
+                        <Loader2 className="h-8 w-8 animate-spin" />
+                        <p className="text-sm">Carregando dados do Supabase...</p>
                       </div>
                     </TableCell>
                   </TableRow>
+                ) : (
+                  <>
+                    {filteredClients.map((client) => (
+                      <TableRow key={client.id} className="hover:bg-primary/5 transition-colors group">
+                        <TableCell className="font-medium py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary font-bold shadow-inner group-hover:scale-110 transition-transform">
+                              {client.name.charAt(0)}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-sm font-bold">{client.name}</span>
+                              <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">ID: {client.id.slice(0, 5)}</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1.5 text-xs">
+                            <span className="flex items-center gap-1.5 text-foreground font-medium">
+                              <Phone className="h-3 w-3 text-primary" /> {client.phone}
+                            </span>
+                            {client.email && (
+                              <span className="flex items-center gap-1.5 text-muted-foreground">
+                                <Mail className="h-3 w-3" /> {client.email}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <div className="flex items-start gap-2 bg-primary/5 p-2.5 rounded-xl border border-primary/10 max-w-[320px] group-hover:bg-primary/10 transition-colors">
+                            <Sparkles className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                            <p className="text-[11px] text-muted-foreground italic leading-relaxed">
+                              {client.aiSummary || "Analisando comportamento..."}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell text-muted-foreground text-xs">
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5 opacity-50" />
+                            {new Date(client.createdAt).toLocaleDateString("pt-BR")}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right pr-6">
+                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-primary/10 hover:text-primary">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {filteredClients.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
+                          Nenhum cliente cadastrado no banco de dados.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </>
                 )}
               </TableBody>
             </Table>
