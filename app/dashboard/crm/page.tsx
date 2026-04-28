@@ -70,9 +70,9 @@ export default function CRMPage() {
                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Live Sync</span>
             </div>
           </div>
-          <p className="text-muted-foreground font-medium mt-1">
+          <div className="text-muted-foreground font-medium mt-1">
             Gestão inteligente de agendamentos via Supabase.
-          </p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" className="h-10 font-bold border-primary/20 hover:bg-primary/5" onClick={loadAppointments}>

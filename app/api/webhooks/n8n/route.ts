@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabase"
 
 export async function POST(req: Request) {
   try {
@@ -13,24 +13,24 @@ export async function POST(req: Request) {
     // 1. Check if client exists or create new one
     let clientId: string
 
-    const { data: existingClient, error: clientError } = await supabase
+    const { data: existingClient, error: clientError } = await supabaseAdmin
       .from('clients')
       .select('id')
       .eq('phone', phone)
       .eq('business_id', businessId)
-      .single()
+      .maybeSingle()
 
     if (existingClient) {
       clientId = existingClient.id
       // Update summary if exists
       if (summary) {
-        await supabase
+        await supabaseAdmin
           .from('clients')
           .update({ ai_summary: summary })
           .eq('id', clientId)
       }
     } else {
-      const { data: newClient, error: insertError } = await supabase
+      const { data: newClient, error: insertError } = await supabaseAdmin
         .from('clients')
         .insert([{
           name,
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     }
 
     // 2. Create the Kanban Card (Lead)
-    const { error: appointmentError } = await supabase
+    const { error: appointmentError } = await supabaseAdmin
       .from('appointments')
       .insert([{
         business_id: businessId,

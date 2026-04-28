@@ -59,17 +59,17 @@ export default function ChatsPage() {
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-3xl font-black tracking-tight bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
             Conversas IA
           </h2>
-          <p className="text-muted-foreground flex items-center gap-2">
+          <div className="text-muted-foreground font-medium flex items-center gap-2">
             Monitoramento em tempo real do Agente 
-            <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 gap-1.5 h-5">
+            <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 gap-1.5">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Beatriz Online
             </Badge>
-          </p>
+          </div>
         </div>
         <div className="hidden md:flex items-center gap-4 bg-muted/30 p-2 rounded-2xl border">
           <div className="flex items-center gap-2 px-3">
