@@ -58,10 +58,10 @@ export default function DashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { title: "Conversões IA", value: "84%", trend: "+12%", icon: Bot, color: "text-blue-500", bg: "bg-blue-500/10" },
-          { title: "Receita (IA)", value: "R$ 14.280", trend: "+8.2%", icon: DollarSign, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-          { title: "Novos Leads", value: "+124", trend: "+18%", icon: Users, color: "text-violet-500", bg: "bg-violet-500/10" },
-          { title: "Tempo Médio", value: "1.2s", trend: "-5%", icon: MessageSquare, color: "text-orange-500", bg: "bg-orange-500/10" },
+          { title: "Conversões IA", value: "84%", trend: "+12%", icon: Bot, color: "text-blue-400", bg: "bg-blue-400/10" },
+          { title: "Receita (IA)", value: "R$ 14.280", trend: "+8.2%", icon: DollarSign, color: "text-emerald-400", bg: "bg-emerald-400/10" },
+          { title: "Novos Leads", value: "+124", trend: "+18%", icon: Users, color: "text-violet-400", bg: "bg-violet-400/10" },
+          { title: "Tempo Médio", value: "1.2s", trend: "-5%", icon: MessageSquare, color: "text-orange-400", bg: "bg-orange-400/10" },
         ].map((stat, i) => (
           <Card key={i} className="group hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 border-primary/5 relative overflow-hidden">
             <div className={`absolute -right-4 -top-4 h-16 w-16 ${stat.bg} rounded-full blur-2xl group-hover:scale-150 transition-transform`} />
@@ -100,9 +100,9 @@ export default function DashboardPage() {
                     </CardTitle>
                     <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Performance: Secretária Beatriz</CardDescription>
                 </div>
-                <div className="flex items-center gap-3 bg-background/50 px-3 py-1.5 rounded-full border border-primary/10">
-                    <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.8)]" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Confirmados</span>
+                <div className="flex items-center gap-3 bg-primary/10 px-4 py-1.5 rounded-full border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.1)]">
+                    <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),1)] animate-pulse" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Confirmados</span>
                 </div>
             </div>
           </CardHeader>
@@ -112,7 +112,7 @@ export default function DashboardPage() {
                 <AreaChart data={DATA}>
                   <defs>
                     <linearGradient id="colorAgend" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
                       <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
@@ -133,11 +133,12 @@ export default function DashboardPage() {
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: "hsl(var(--card))", 
-                      borderColor: "hsl(var(--primary) / 0.3)",
+                      borderColor: "hsl(var(--primary) / 0.5)",
                       borderRadius: "16px",
                       fontSize: "11px",
                       fontWeight: "900",
-                      boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.2)"
+                      boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.5)",
+                      borderWidth: "2px"
                     }}
                     cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 2, strokeDasharray: '6 6' }}
                   />
@@ -145,11 +146,11 @@ export default function DashboardPage() {
                     type="monotone" 
                     dataKey="agendamentos" 
                     stroke="hsl(var(--primary))" 
-                    strokeWidth={5}
+                    strokeWidth={6}
                     fillOpacity={1} 
                     fill="url(#colorAgend)" 
                     animationDuration={2500}
-                    activeDot={{ r: 6, strokeWidth: 0, fill: "hsl(var(--primary))", className: "shadow-lg" }}
+                    activeDot={{ r: 8, strokeWidth: 0, fill: "hsl(var(--primary))", className: "shadow-[0_0_15px_rgba(var(--primary),1)]" }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -166,8 +167,8 @@ export default function DashboardPage() {
             <div className="space-y-7">
               {[
                 { name: "WhatsApp Business", growth: 92, color: "bg-emerald-500" },
-                { name: "Direct Instagram", growth: 78, color: "bg-blue-500" },
-                { name: "Site Institucional", growth: 45, color: "bg-orange-500" },
+                { name: "Direct Instagram", growth: 78, color: "bg-blue-400" },
+                { name: "Site Institucional", growth: 45, color: "bg-orange-400" },
               ].map((item, i) => (
                 <div key={i} className="group space-y-3">
                   <div className="flex items-center justify-between text-[10px]">
@@ -176,7 +177,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="h-2 w-full bg-muted rounded-full overflow-hidden border border-muted-foreground/5 p-0">
                     <div 
-                      className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(0,0,0,0.3)]`} 
+                      className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(0,0,0,0.4)]`} 
                       style={{ width: `${item.growth}%` }}
                     />
                   </div>
