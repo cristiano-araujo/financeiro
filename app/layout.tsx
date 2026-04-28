@@ -1,20 +1,16 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
+import { Inter } from "next/font/google"
 import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/lib/auth-context"
-import { DataProvider } from "@/lib/data-context"
-import { ThemeProvider } from "@/lib/theme-context"
-import { Footer } from "@/components/footer"
+import { Toaster } from "sonner"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "R2C Controle - Sistema Financeiro",
-  description: "Sistema de gestão financeira para empresas",
-  generator: "v0.app",
+  title: "AI CRM | Gestão Inteligente",
+  description: "Plataforma de CRM com Agente de IA para Agendamentos e Atendimento",
 }
 
 export default function RootLayout({
@@ -24,16 +20,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`font-sans antialiased flex flex-col min-h-screen`}>
-        <ThemeProvider>
+      <body className={`${inter.className} min-h-screen bg-background antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
           <AuthProvider>
-            <DataProvider>
-              <div className="flex-1">{children}</div>
-              <Footer />
-            </DataProvider>
+            {children}
+            <Toaster position="top-right" richColors />
           </AuthProvider>
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   )

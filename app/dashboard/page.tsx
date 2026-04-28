@@ -1,275 +1,123 @@
 "use client"
 
-import { useData } from "@/lib/data-context"
-import { useAuth } from "@/lib/auth-context"
-import { PageHeader } from "@/components/page-header"
-import { ExportButton } from "@/components/export-button"
-import { ComissoesList } from "@/components/comissoes-list"
-import { FinanceChart } from "@/components/finance-chart"
-import { AgendamentosChart } from "@/components/agendamentos-chart"
-import { ServicesChart } from "@/components/services-chart"
-import { ComissoesChart } from "@/components/comissoes-chart"
-import { LucroEvolutionChart } from "@/components/lucro-evolution-chart"
-import { ClientesStatusChart } from "@/components/clientes-status-chart"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DollarSign, TrendingUp, TrendingDown, Target, Users, Calendar, Scissors, AlertCircle } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { 
+  Users, 
+  Calendar, 
+  DollarSign, 
+  TrendingUp, 
+  Bot, 
+  MessageSquare,
+  Sparkles
+} from "lucide-react"
 
 export default function DashboardPage() {
-  const { calcularFinanceiro, agendamentos, clientes, servicos, configuracao } = useData()
-  const { user } = useAuth()
-  const financeiro = calcularFinanceiro()
-  const isAdmin = user?.role === "admin"
-
-  // Estatísticas
-  const hoje = new Date()
-  const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1)
-  const agendamentosMes = agendamentos.filter((a) => new Date(a.data) >= inicioMes).length
-  const agendamentosConcluidos = agendamentos.filter((a) => a.status === "concluido").length
-
-  // Calcular percentual de lucro atual
-  const percentualLucro =
-    financeiro.custoTotal > 0 ? ((financeiro.lucroAtual / financeiro.custoTotal) * 100).toFixed(1) : "0.0"
-
-  // Verificar se está no prejuízo
-  const isNoPrejuizo = financeiro.lucroAtual < 0
-
   return (
-    <div className="px-2 sm:px-0">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
-        <PageHeader title="Dashboard" description="Visão geral do desempenho financeiro da barbearia" />
-        <ExportButton
-          variant="relatorio-completo"
-          custosFixos={useData().custosFixos}
-          custosVariaveis={useData().custosVariaveis}
-          servicos={servicos}
-          clientes={clientes}
-          agendamentos={agendamentos}
-          financeiro={financeiro}
-          comissoes={useData().calcularComissoes()}
-        />
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+        <p className="text-muted-foreground">
+          Bem-vindo ao seu centro de comando de IA. Veja o desempenho da sua secretária.
+        </p>
       </div>
 
-      {/* Alerta de Prejuízo */}
-      {isAdmin && isNoPrejuizo && (
-        <Alert variant="destructive" className="mb-4 sm:mb-6">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Atenção: Operação em Prejuízo</AlertTitle>
-          <AlertDescription>
-            Sua barbearia está operando com prejuízo de R$ {Math.abs(financeiro.lucroAtual).toFixed(2)}. Revise seus
-            custos ou aumente o número de atendimentos.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Cards Principais - Métricas Financeiras */}
-      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-4 sm:mb-8">
-        {isAdmin ? (
-          <>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Receita Atual</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold">R$ {financeiro.receitaAtual.toFixed(2)}</div>
-                <p className="text-xs text-muted-foreground">De {agendamentosConcluidos} atendimentos</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Custos Totais</CardTitle>
-                <TrendingDown className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold">R$ {financeiro.custoTotal.toFixed(2)}</div>
-                <p className="text-xs text-muted-foreground">
-                  Fixos: R$ {financeiro.totalCustosFixos.toFixed(2)} | Variáveis: R${" "}
-                  {financeiro.totalCustosVariaveis.toFixed(2)}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Lucro Atual</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className={`text-xl sm:text-2xl font-bold ${isNoPrejuizo ? "text-destructive" : ""}`}>
-                  R$ {financeiro.lucroAtual.toFixed(2)}
-                </div>
-                <p className="text-xs text-muted-foreground">{percentualLucro}% sobre os custos</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Comissões acumuladas</CardTitle>
-                <TrendingDown className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold text-amber-600">R$ {financeiro.totalComissoes.toFixed(2)}</div>
-                <p className="text-xs text-muted-foreground">
-                  A pagar aos {financeiro.comissoes.filter(c => c.totalServicos > 0).length} profissional(is) com produção
-                </p>
-              </CardContent>
-            </Card>
-          </>
-        ) : (
-          <>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Seus Atendimentos</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold">
-                  {agendamentos.filter((a) => a.usuarioId === user?.id && a.status === "concluido").length}
-                </div>
-                <p className="text-xs text-muted-foreground">Total concluídos</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Sua Comissão estimada</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold text-amber-600">
-                  R$ {useData().calcularComissoes().find(c => c.usuarioId === user?.id)?.valorComissao.toFixed(2) || "0.00"}
-                </div>
-                <p className="text-xs text-muted-foreground">Valor total acumulado</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Clientes Atendidos</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold">
-                  {new Set(agendamentos.filter((a) => a.usuarioId === user?.id).map(a => a.clienteId)).size}
-                </div>
-                <p className="text-xs text-muted-foreground">Clientes únicos vinculados a você</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Status</CardTitle>
-                <Target className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold text-green-600">Ativo</div>
-                <p className="text-xs text-muted-foreground">Perfil verificado</p>
-              </CardContent>
-            </Card>
-          </>
-        )}
-      </div>
-
-      {/* Cards de Metas */}
-      <div className="grid gap-3 grid-cols-1 md:grid-cols-2 mb-4 sm:mb-8">
-        {isAdmin && (
-          <Card className="border-primary/50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <Target className="h-4 w-4 sm:h-5 sm:w-5" />
-                Meta: 150% de Lucro
-              </CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                Quantidade de serviços necessários para atingir a meta
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-bold">{financeiro.metaLucro150}</span>
-                  <span className="text-sm text-muted-foreground">serviços</span>
-                </div>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Faltam {Math.max(0, financeiro.metaLucro150 - agendamentosConcluidos)} atendimentos para atingir a meta
-                </p>
-                <div className="w-full bg-secondary rounded-full h-2 mt-4">
-                  <div
-                    className="bg-primary h-2 rounded-full transition-all"
-                    style={{
-                      width: `${Math.min(100, (agendamentosConcluidos / financeiro.metaLucro150) * 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
-              Resumo do Período
-            </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">Estatísticas gerais do sistema</CardDescription>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="hover:border-primary/50 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 sm:space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs sm:text-sm">Total de Clientes</span>
-                </div>
-                <span className="font-bold text-sm sm:text-base">{clientes.length}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Scissors className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs sm:text-sm">Serviços Ativos</span>
-                </div>
-                <span className="font-bold text-sm sm:text-base">{servicos.filter((s) => s.ativo).length}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs sm:text-sm">Agendamentos (Mês)</span>
-                </div>
-                <span className="font-bold text-sm sm:text-base">{agendamentosMes}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs sm:text-sm">Concluídos</span>
-                </div>
-                <span className="font-bold text-sm sm:text-base">{agendamentosConcluidos}</span>
-              </div>
-            </div>
+            <div className="text-2xl font-bold">1,284</div>
+            <p className="text-xs text-muted-foreground">
+              +20.1% em relação ao mês passado
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="hover:border-primary/50 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Agendamentos IA</CardTitle>
+            <Bot className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">+573</div>
+            <p className="text-xs text-muted-foreground">
+              Taxa de conversão: 68%
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="hover:border-primary/50 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Receita Estimada</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">R$ 12.234,50</div>
+            <p className="text-xs text-muted-foreground">
+              Gerada automaticamente pela IA
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="hover:border-primary/50 transition-colors border-primary/20 bg-primary/5">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Conversas Ativas</CardTitle>
+            <MessageSquare className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">42</div>
+            <p className="text-xs text-muted-foreground">
+              Clientes interagindo agora
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Comissões List */}
-      <div className="mb-4 sm:mb-8">
-        <ComissoesList />
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Visão Geral de Agendamentos</CardTitle>
+            <CardDescription>
+              Fluxo de novos agendamentos criados pela IA por dia.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="h-[300px] flex items-center justify-center border-t">
+            <div className="text-muted-foreground text-sm flex flex-col items-center gap-2">
+              <TrendingUp className="h-8 w-8 opacity-20" />
+              Gráfico de Recharts será renderizado aqui
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Últimas Interações IA</CardTitle>
+            <CardDescription>
+              Conversas recentes processadas pelo Agente.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[
+                { name: "Carlos Magno", intent: "Agendamento", status: "Sucesso", time: "2 min atrás" },
+                { name: "Ana Beatriz", intent: "Dúvida Preço", status: "Respondido", time: "15 min atrás" },
+                { name: "João Silva", intent: "Cancelamento", status: "Processado", time: "1h atrás" },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-transparent hover:border-primary/20 transition-colors">
+                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                    {item.name.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium leading-none">{item.name}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {item.intent} • <span className="text-primary/80">{item.status}</span>
+                    </p>
+                  </div>
+                  <div className="text-xs text-muted-foreground">{item.time}</div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Seção de Gráficos */}
-      {isAdmin && (
-        <div className="mb-4 sm:mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold mb-4">Análises e Gráficos</h2>
-          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-4 sm:mb-8">
-            <FinanceChart />
-            <ComissoesChart />
-          </div>
-          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-4 sm:mb-8">
-            <LucroEvolutionChart />
-            <AgendamentosChart />
-          </div>
-          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-            <ServicesChart />
-            <ClientesStatusChart />
-          </div>
-        </div>
-      )}
     </div>
   )
 }
