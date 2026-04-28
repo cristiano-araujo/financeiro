@@ -24,6 +24,7 @@ import { useTheme } from "next-themes"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useEffect, useState } from "react"
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -43,6 +44,12 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   const pathname = usePathname()
   const { user, logout } = useAuth()
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <div 
@@ -68,18 +75,18 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
         </div>
         {!isCollapsed && (
           <div className="animate-in fade-in slide-in-from-left-4 duration-500">
-            <h1 className="text-xl font-black tracking-tighter text-primary">AICRM</h1>
+            <h1 className="text-xl font-black tracking-tighter text-primary leading-none">AICRM</h1>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold leading-tight">Pro Edition</p>
           </div>
         )}
       </div>
 
-      <Separator className="mx-6 w-auto opacity-50" />
+      <Separator className="mx-6 w-auto opacity-50 mb-2" />
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
         {!isCollapsed && (
-          <p className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Menu Principal</p>
+          <p className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">Menu Principal</p>
         )}
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href
@@ -88,68 +95,67 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
               key={item.href} 
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative",
+                "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group relative",
                 isActive 
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]" 
-                  : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                  ? "bg-primary/10 text-primary" 
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               )}
             >
               <item.icon className={cn(
                 "h-5 w-5 transition-transform duration-300 group-hover:scale-110",
-                isActive ? "text-primary-foreground" : "group-hover:text-primary"
+                isActive ? "text-primary" : "group-hover:text-foreground"
               )} />
               {!isCollapsed && (
-                <span className="font-semibold tracking-tight animate-in fade-in slide-in-from-left-2 duration-300">
+                <span className="font-semibold text-sm tracking-tight animate-in fade-in slide-in-from-left-2 duration-300">
                   {item.label}
                 </span>
               )}
-              {isActive && !isCollapsed && (
-                <div className="absolute right-4 h-1.5 w-1.5 rounded-full bg-primary-foreground animate-pulse" />
+              {isActive && (
+                <div className="absolute right-0 h-6 w-1 rounded-l-full bg-primary animate-in slide-in-from-right-1 duration-500" />
               )}
             </Link>
           )
         })}
       </nav>
 
-      {/* Theme Toggle & User */}
+      {/* Footer / User & Theme */}
       <div className="p-4 mt-auto space-y-4">
-        {/* Theme Toggle */}
-        <div className={cn(
-          "flex items-center gap-2 p-1 rounded-xl bg-muted/50 border",
-          isCollapsed ? "flex-col" : "flex-row"
-        )}>
-          <Button 
-            variant={theme === "light" ? "secondary" : "ghost"} 
-            size="icon" 
-            className="h-8 w-full rounded-lg"
-            onClick={() => setTheme("light")}
-          >
-            <Sun className="h-4 w-4" />
-          </Button>
-          <Button 
-            variant={theme === "dark" ? "secondary" : "ghost"} 
-            size="icon" 
-            className="h-8 w-full rounded-lg"
-            onClick={() => setTheme("dark")}
-          >
-            <Moon className="h-4 w-4" />
-          </Button>
-        </div>
+        {!isCollapsed && (
+          <div className="mx-2 p-3 rounded-xl bg-primary/5 border border-primary/10">
+            <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary/60">Aparência</span>
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6 rounded-lg hover:bg-primary/10"
+                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                >
+                    {mounted && (theme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />)}
+                </Button>
+            </div>
+            <div className="flex items-center gap-2">
+                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary/40 w-[84%]" />
+                </div>
+                <span className="text-[9px] font-bold text-muted-foreground">84%</span>
+            </div>
+          </div>
+        )}
 
         <div className={cn(
-          "flex items-center gap-3 p-3 rounded-2xl border bg-muted/30 transition-all",
+          "flex items-center gap-3 p-2.5 rounded-2xl border bg-muted/20 transition-all",
           isCollapsed ? "justify-center" : "justify-between"
         )}>
           <div className="flex items-center gap-3 overflow-hidden">
-            <Avatar className="h-9 w-9 border-2 border-primary/20">
-              <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
+            <Avatar className="h-8 w-8 border-2 border-primary/20 shrink-0">
+              <AvatarFallback className="bg-primary/10 text-primary font-bold text-[10px]">
                 {user?.name?.charAt(0) || "A"}
               </AvatarFallback>
             </Avatar>
             {!isCollapsed && (
-              <div className="animate-in fade-in slide-in-from-left-2 duration-300">
-                <p className="text-xs font-bold truncate max-w-[120px]">{user?.name || "Usuário"}</p>
-                <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">{user?.role || "Admin"}</p>
+              <div className="animate-in fade-in slide-in-from-left-2 duration-300 min-w-0">
+                <p className="text-xs font-bold truncate leading-none">{user?.name || "Usuário"}</p>
+                <p className="text-[9px] text-muted-foreground uppercase font-black tracking-tighter mt-1">{user?.role || "Admin"}</p>
               </div>
             )}
           </div>
@@ -157,10 +163,20 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-colors"
+              className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive transition-colors shrink-0"
               onClick={logout}
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-3.5 w-3.5" />
+            </Button>
+          )}
+          {isCollapsed && (
+             <Button 
+                variant="ghost" 
+                size="icon" 
+                className="absolute -top-12 h-8 w-8 rounded-full border bg-background"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+                {mounted && (theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />)}
             </Button>
           )}
         </div>
