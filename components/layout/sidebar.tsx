@@ -46,10 +46,11 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
-  // Avoid hydration mismatch
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark")
 
   return (
     <div 
@@ -58,7 +59,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
         isCollapsed ? "w-[80px]" : "w-[280px]"
       )}
     >
-      {/* Toggle Button */}
+      {/* Toggle Sidebar Button */}
       <Button
         variant="ghost"
         size="icon"
@@ -76,7 +77,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
         {!isCollapsed && (
           <div className="animate-in fade-in slide-in-from-left-4 duration-500">
             <h1 className="text-xl font-black tracking-tighter text-primary leading-none">AICRM</h1>
-            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold leading-tight">Pro Edition</p>
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold leading-tight mt-1">Pro Edition</p>
           </div>
         )}
       </div>
@@ -119,42 +120,58 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       </nav>
 
       {/* Footer / User & Theme */}
-      <div className="p-4 mt-auto space-y-4">
+      <div className="p-4 mt-auto flex flex-col gap-4">
+        {/* Appearance Widget (Visible only when expanded) */}
         {!isCollapsed && (
-          <div className="mx-2 p-3 rounded-xl bg-primary/5 border border-primary/10">
+          <div className="mx-2 p-3 rounded-xl bg-primary/5 border border-primary/10 animate-in fade-in zoom-in-95 duration-500">
             <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-primary/60">Aparência</span>
                 <Button 
                     variant="ghost" 
                     size="icon" 
                     className="h-6 w-6 rounded-lg hover:bg-primary/10"
-                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                    onClick={toggleTheme}
                 >
-                    {mounted && (theme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />)}
+                    {mounted && (theme === "dark" ? <Sun className="h-3.5 w-3.5 text-primary" /> : <Moon className="h-3.5 w-3.5 text-primary" />)}
                 </Button>
             </div>
             <div className="flex items-center gap-2">
-                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-primary/40 w-[84%]" />
+                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden p-[1px]">
+                    <div className="h-full bg-primary rounded-full w-[84%] shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
                 </div>
-                <span className="text-[9px] font-bold text-muted-foreground">84%</span>
+                <span className="text-[9px] font-bold text-primary">84%</span>
             </div>
           </div>
         )}
 
+        {/* Theme Toggle (Visible only when collapsed) */}
+        {isCollapsed && (
+          <div className="flex justify-center animate-in fade-in zoom-in-95 duration-500">
+            <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-10 w-10 rounded-xl bg-muted/40 hover:bg-primary/10 border border-transparent hover:border-primary/20"
+                onClick={toggleTheme}
+            >
+                {mounted && (theme === "dark" ? <Sun className="h-5 w-5 text-primary" /> : <Moon className="h-5 w-5 text-primary" />)}
+            </Button>
+          </div>
+        )}
+
+        {/* Profile Section */}
         <div className={cn(
-          "flex items-center gap-3 p-2.5 rounded-2xl border bg-muted/20 transition-all",
+          "flex items-center gap-3 p-2.5 rounded-2xl border bg-muted/20 transition-all hover:bg-muted/30",
           isCollapsed ? "justify-center" : "justify-between"
         )}>
           <div className="flex items-center gap-3 overflow-hidden">
             <Avatar className="h-8 w-8 border-2 border-primary/20 shrink-0">
-              <AvatarFallback className="bg-primary/10 text-primary font-bold text-[10px]">
+              <AvatarFallback className="bg-primary/10 text-primary font-black text-[10px]">
                 {user?.name?.charAt(0) || "A"}
               </AvatarFallback>
             </Avatar>
             {!isCollapsed && (
               <div className="animate-in fade-in slide-in-from-left-2 duration-300 min-w-0">
-                <p className="text-xs font-bold truncate leading-none">{user?.name || "Usuário"}</p>
+                <p className="text-xs font-black truncate leading-none">{user?.name || "Usuário"}</p>
                 <p className="text-[9px] text-muted-foreground uppercase font-black tracking-tighter mt-1">{user?.role || "Admin"}</p>
               </div>
             )}
@@ -167,16 +184,6 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
               onClick={logout}
             >
               <LogOut className="h-3.5 w-3.5" />
-            </Button>
-          )}
-          {isCollapsed && (
-             <Button 
-                variant="ghost" 
-                size="icon" 
-                className="absolute -top-12 h-8 w-8 rounded-full border bg-background"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-                {mounted && (theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />)}
             </Button>
           )}
         </div>
