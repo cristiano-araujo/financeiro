@@ -3,7 +3,8 @@
 import { Sidebar } from "@/components/layout/sidebar"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { cn } from "@/lib/utils"
 
 export default function DashboardLayout({
   children,
@@ -11,6 +12,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const { user, isLoading } = useAuth()
+  const [isCollapsed, setIsCollapsed] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -21,11 +23,8 @@ export default function DashboardLayout({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="h-12 w-12 bg-primary/20 rounded-full" />
-          <div className="h-4 w-32 bg-primary/10 rounded" />
-        </div>
+      <div className="flex items-center justify-center h-screen bg-background text-primary font-black animate-pulse">
+        AICRM...
       </div>
     )
   }
@@ -35,12 +34,18 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="h-full relative">
-      <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-[80] bg-gray-900">
-        <Sidebar />
-      </div>
-      <main className="md:pl-72 bg-background min-h-screen">
-        <div className="p-4 md:p-8">
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar Container */}
+      <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+      
+      {/* Main Content Area */}
+      <main 
+        className={cn(
+          "flex-1 overflow-y-auto transition-all duration-500 ease-in-out bg-background/50",
+          isCollapsed ? "pl-0" : "pl-0" // We'll use flex-1 and the sidebar will naturally push it
+        )}
+      >
+        <div className="container mx-auto p-4 md:p-8 max-w-full">
           {children}
         </div>
       </main>

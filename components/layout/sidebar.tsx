@@ -14,12 +14,13 @@ import {
   ChevronRight,
   Sparkles,
   Zap,
-  CreditCard
+  Moon,
+  Sun
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
-import { useState } from "react"
+import { useTheme } from "next-themes"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -33,10 +34,15 @@ const NAV_ITEMS = [
   { icon: Bot, label: "Configurar IA", href: "/dashboard/ai-settings" },
 ]
 
-export function Sidebar() {
+interface SidebarProps {
+  isCollapsed: boolean
+  setIsCollapsed: (value: boolean) => void
+}
+
+export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   const pathname = usePathname()
   const { user, logout } = useAuth()
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const { theme, setTheme } = useTheme()
 
   return (
     <div 
@@ -105,21 +111,30 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Footer / User Profile */}
-      <div className="p-4 mt-auto">
-        {!isCollapsed && (
-          <div className="mb-4 p-4 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/10 relative overflow-hidden group">
-            <div className="absolute -right-4 -bottom-4 h-16 w-16 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all" />
-            <div className="flex items-center gap-2 mb-2">
-              <Zap className="h-3 w-3 text-primary" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Plano Enterprise</span>
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">Seu limite de IA está em **84%**. Considere um upgrade.</p>
-            <Button variant="link" className="p-0 h-auto text-[10px] font-bold text-primary hover:no-underline mt-2">
-              Ver Detalhes →
-            </Button>
-          </div>
-        )}
+      {/* Theme Toggle & User */}
+      <div className="p-4 mt-auto space-y-4">
+        {/* Theme Toggle */}
+        <div className={cn(
+          "flex items-center gap-2 p-1 rounded-xl bg-muted/50 border",
+          isCollapsed ? "flex-col" : "flex-row"
+        )}>
+          <Button 
+            variant={theme === "light" ? "secondary" : "ghost"} 
+            size="icon" 
+            className="h-8 w-full rounded-lg"
+            onClick={() => setTheme("light")}
+          >
+            <Sun className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant={theme === "dark" ? "secondary" : "ghost"} 
+            size="icon" 
+            className="h-8 w-full rounded-lg"
+            onClick={() => setTheme("dark")}
+          >
+            <Moon className="h-4 w-4" />
+          </Button>
+        </div>
 
         <div className={cn(
           "flex items-center gap-3 p-3 rounded-2xl border bg-muted/30 transition-all",
@@ -127,15 +142,14 @@ export function Sidebar() {
         )}>
           <div className="flex items-center gap-3 overflow-hidden">
             <Avatar className="h-9 w-9 border-2 border-primary/20">
-              <AvatarImage src="" />
-              <AvatarFallback className="bg-primary/10 text-primary font-bold">
+              <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                 {user?.name?.charAt(0) || "A"}
               </AvatarFallback>
             </Avatar>
             {!isCollapsed && (
               <div className="animate-in fade-in slide-in-from-left-2 duration-300">
-                <p className="text-sm font-bold truncate max-w-[120px]">{user?.name || "Usuário"}</p>
-                <p className="text-[10px] text-muted-foreground uppercase font-black">{user?.role || "Admin"}</p>
+                <p className="text-xs font-bold truncate max-w-[120px]">{user?.name || "Usuário"}</p>
+                <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">{user?.role || "Admin"}</p>
               </div>
             )}
           </div>
