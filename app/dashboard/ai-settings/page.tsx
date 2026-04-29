@@ -4,6 +4,15 @@ import { useEffect, useState } from "react"
 import { db } from "@/lib/db"
 import { Business } from "@/lib/types"
 
+import { Bot, Zap, Save, Sparkles, ShieldCheck, MessageSquare } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { toast } from "sonner"
+
 export default function AISettingsPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
