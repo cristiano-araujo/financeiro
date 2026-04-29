@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "activeInstanceId": "instance-f391f897",
+  "instances": [
+    {
+      "id": "instance-f391f897",
+      "name": "laquita-hyperpyretic-abril.ngrok-free.dev",
+      "host": "https://laquita-hyperpyretic-abril.ngrok-free.dev",
+      "syncFolder": "workflows",
+      "projectId": "personal",
+      "projectName": "Personal",
+      "instanceIdentifier": "laquita_hyperpyretic_abril_ngrok_free_dev_user_a15287d8_6764_473c_86c2_433f4c6604db",
+      "workflowDir": "workflows/laquita_hyperpyretic_abril_ngrok_free_dev_user_a15287d8_6764_473c_86c2_433f4c6604db/personal",
+      "verification": {
+        "status": "verified",
+        "normalizedHost": "https://laquita-hyperpyretic-abril.ngrok-free.dev",
+        "userId": "a15287d8-6764-473c-86c2-433f4c6604db",
+        "lastCheckedAt": "2026-04-29T10:42:37.621Z"
+      }
+    }
+  ],
+  "host": "https://laquita-hyperpyretic-abril.ngrok-free.dev",
+  "syncFolder": "workflows",
+  "projectId": "personal",
+  "projectName": "Personal",
+  "instanceIdentifier": "laquita_hyperpyretic_abril_ngrok_free_dev_user_a15287d8_6764_473c_86c2_433f4c6604db",
+  "workflowDir": "workflows/laquita_hyperpyretic_abril_ngrok_free_dev_user_a15287d8_6764_473c_86c2_433f4c6604db/personal"
+}

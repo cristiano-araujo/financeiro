@@ -1,0 +1,14 @@
+{
+  "workflows": {
+    "JgIFKMvBCUdYGiYn": {
+      "lastSyncedHash": "eeda28a0723f923245596e7b4ecc7f92dbcf5e9869f3a7e4858db04bf54c0b04",
+      "lastSyncedAt": "2026-04-28T20:01:29.952Z",
+      "filename": "AICRM_Agent.workflow.ts"
+    },
+    "DjcGHag5l1SbE1Cb": {
+      "lastSyncedHash": "eba0c0a0e903469afe70614d53e4794d1d453e25dcfa4fabe80a89f74cdcf079",
+      "lastSyncedAt": "2026-04-26T02:14:39.951Z",
+      "filename": "Agente Barbearia.workflow.ts"
+    }
+  }
+}
