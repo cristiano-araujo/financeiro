@@ -1,28 +1,30 @@
 {
   "version": 2,
-  "activeInstanceId": "instance-f391f897",
+  "activeInstanceId": "instance-2744f3ae",
   "instances": [
     {
-      "id": "instance-f391f897",
-      "name": "laquita-hyperpyretic-abril.ngrok-free.dev",
-      "host": "https://laquita-hyperpyretic-abril.ngrok-free.dev",
+      "id": "instance-2744f3ae",
+      "name": "localhost · JOAO ARAUJO",
+      "host": "http://localhost:5678",
       "syncFolder": "workflows",
       "projectId": "personal",
       "projectName": "Personal",
-      "instanceIdentifier": "laquita_hyperpyretic_abril_ngrok_free_dev_user_a15287d8_6764_473c_86c2_433f4c6604db",
-      "workflowDir": "workflows/laquita_hyperpyretic_abril_ngrok_free_dev_user_a15287d8_6764_473c_86c2_433f4c6604db/personal",
+      "instanceIdentifier": "local_5678_joao_a",
+      "workflowDir": "workflows/local_5678_joao_a/personal",
       "verification": {
         "status": "verified",
-        "normalizedHost": "https://laquita-hyperpyretic-abril.ngrok-free.dev",
+        "normalizedHost": "http://localhost:5678",
         "userId": "a15287d8-6764-473c-86c2-433f4c6604db",
-        "lastCheckedAt": "2026-04-29T10:42:37.621Z"
+        "userName": "JOAO ARAUJO",
+        "userEmail": "cristiano112715@gmail.com",
+        "lastCheckedAt": "2026-04-29T22:58:06.333Z"
       }
     }
   ],
-  "host": "https://laquita-hyperpyretic-abril.ngrok-free.dev",
+  "host": "http://localhost:5678",
   "syncFolder": "workflows",
   "projectId": "personal",
   "projectName": "Personal",
-  "instanceIdentifier": "laquita_hyperpyretic_abril_ngrok_free_dev_user_a15287d8_6764_473c_86c2_433f4c6604db",
-  "workflowDir": "workflows/laquita_hyperpyretic_abril_ngrok_free_dev_user_a15287d8_6764_473c_86c2_433f4c6604db/personal"
+  "instanceIdentifier": "local_5678_joao_a",
+  "workflowDir": "workflows/local_5678_joao_a/personal"
 }
