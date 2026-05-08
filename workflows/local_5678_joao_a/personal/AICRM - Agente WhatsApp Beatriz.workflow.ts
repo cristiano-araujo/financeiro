@@ -120,7 +120,7 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
     })
     AiAgent = {
         promptType: 'define',
-        text: '={{ $json.body.payload.body }}',
+        text: '={{ $("Waha Webhook").item.json.body.payload.body }}',
         options: {
             systemMessage: '={{ $node["Get AI Personality"].json.ai_personality }}',
         },
@@ -135,7 +135,7 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
         credentials: { groqApi: { id: 'WIyQB5s7X3ECnHX6', name: 'Groq account 2' } },
     })
     GroqModel = {
-        model: 'llama3-70b-8192',
+        model: 'llama-3.3-70b-versatile',
         options: {},
     };
 
@@ -147,6 +147,8 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
         position: [650, 224],
     })
     Memory = {
+        sessionIdType: 'customKey',
+        sessionKey: '={{ $("Waha Webhook").item.json.body.payload.from }}',
         contextWindowLength: 10,
     };
 

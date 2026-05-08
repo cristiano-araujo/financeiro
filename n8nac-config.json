@@ -1,30 +1,7 @@
 {
-  "version": 2,
-  "activeInstanceId": "instance-2744f3ae",
-  "instances": [
-    {
-      "id": "instance-2744f3ae",
-      "name": "localhost · JOAO ARAUJO",
-      "host": "http://localhost:5678",
-      "syncFolder": "workflows",
-      "projectId": "personal",
-      "projectName": "Personal",
-      "instanceIdentifier": "local_5678_joao_a",
-      "workflowDir": "workflows/local_5678_joao_a/personal",
-      "verification": {
-        "status": "verified",
-        "normalizedHost": "http://localhost:5678",
-        "userId": "a15287d8-6764-473c-86c2-433f4c6604db",
-        "userName": "JOAO ARAUJO",
-        "userEmail": "cristiano112715@gmail.com",
-        "lastCheckedAt": "2026-04-29T22:58:06.333Z"
-      }
-    }
-  ],
-  "host": "http://localhost:5678",
+  "version": 3,
   "syncFolder": "workflows",
   "projectId": "personal",
   "projectName": "Personal",
-  "instanceIdentifier": "local_5678_joao_a",
-  "workflowDir": "workflows/local_5678_joao_a/personal"
+  "folderSync": false
 }

@@ -32,12 +32,11 @@ import { workflow, node, links } from '@n8n-as-code/transformer';
 // =====================================================================
 
 @workflow({
-    id: "JgIFKMvBCUdYGiYn",
+    id: "Z1cUWl0tQKvf3kSh",
     name: "AICRM - Agente WhatsApp Beatriz",
-    active: true,
+    active: false,
     isArchived: false,
-    projectId: "ovvYADyCWkTeTnXI",
-    settings: { saveManualExecutions: true, saveExecutionProgress: true, callerPolicy: "workflowsFromSameOwner", executionOrder: "v1", binaryMode: "separate" }
+    settings: { executionOrder: "v1", binaryMode: "separate" }
 })
 export class AicrmAgenteWhatsappBeatrizWorkflow {
 
@@ -46,12 +45,12 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
 // =====================================================================
 
     @node({
-        id: "bc88f3ea-227c-409b-9c57-4b6f0a6a0f9c",
+        id: "3577f849-456a-4058-9d9f-6d74124609be",
         webhookId: "b5b155f6-88ed-45db-86ea-852d13ad9744",
         name: "Waha Webhook",
         type: "n8n-nodes-base.webhook",
         version: 1,
-        position: [0, 0]
+        position: [-96, -80]
     })
     WahaWebhook = {
         httpMethod: "POST",
@@ -60,17 +59,22 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
     };
 
     @node({
-        id: "new-ignore-groups-node",
+        id: "ae97ad16-7e5c-454a-b8b8-ea104bd03a7c",
         name: "Ignore Groups",
         type: "n8n-nodes-base.if",
         version: 1,
-        position: [200, 0]
+        position: [96, -48]
     })
     IgnoreGroups = {
         conditions: {
             string: [
                 {
-                    value1: "={{ $json.payload.from }}",
+                    value1: "={{ $json.body?.event || $json.event || '' }}",
+                    operation: "contains",
+                    value2: "message"
+                },
+                {
+                    value1: "={{ $json.body.payload?.from || '' }}",
                     operation: "notEndsWith",
                     value2: "@g.us"
                 }
@@ -79,96 +83,78 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
     };
 
     @node({
-        id: "cc1151ea-f843-4929-a227-9a23e5b42013",
+        id: "fd4e3052-ef8e-4d4d-87b8-b0ddd8b6b588",
         name: "Get AI Personality",
         type: "n8n-nodes-base.supabase",
         version: 1,
-        position: [400, 0],
-        credentials: {supabaseApi:{id:"tDU4ywoMnLLa7Vfq",name:"Supabase account"}}
+        position: [304, -80],
+        credentials: {supabaseApi:{id:"JGCNengbH2tUqr5r",name:"Supabase account"}}
     })
     GetAiPersonality = {
-        operation: "get",
+        operation: "getAll",
         tableId: "businesses",
-        filterType: "manual",
-        matchType: "allFilters",
-        filters: {
-            conditions: [
-                {
-                    keyName: "id",
-                    condition: "eq",
-                    keyValue: "74888888-4444-4444-4444-888888888888"
-                }
-            ]
-        }
+        returnAll: false,
+        limit: 1
     };
 
     @node({
-        id: "377b6557-9468-4d4a-8363-c8f0d9db1f60",
+        id: "45fc3b04-9102-4653-9e23-179345ad1cdf",
         name: "AI Agent",
         type: "@n8n/n8n-nodes-langchain.agent",
         version: 1.7,
-        position: [600, 0]
+        position: [512, -80]
     })
     AiAgent = {
         promptType: "define",
-        text: "={{ $json.payload.body }}",
+        text: "={{ $(\"Waha Webhook\").item.json.body.payload.body }}",
         options: {
             systemMessage: "={{ $node[\"Get AI Personality\"].json.ai_personality }}"
         }
     };
 
     @node({
-        id: "41b51937-7f93-40cb-a29e-f28ef136d1e0",
+        id: "483c440a-1786-409b-834d-6cef248241e3",
         name: "Groq Model",
         type: "@n8n/n8n-nodes-langchain.lmChatGroq",
         version: 1,
-        position: [500, 208],
-        credentials: {groqApi:{id:"WIyQB5s7X3ECnHX6",name:"Groq account 2"}}
+        position: [416, 128],
+        credentials: {groqApi:{id:"4XklXkiOFw8srNtT",name:"Groq account"}}
     })
     GroqModel = {
-        model: "llama3-70b-8192",
+        model: "groq/compound",
         options: {}
     };
 
     @node({
-        id: "b7c089d1-2e9f-4dfd-9942-e879317cd32a",
+        id: "bad80657-960d-4ca6-91a2-b4d149922bfd",
         name: "Memory",
         type: "@n8n/n8n-nodes-langchain.memoryBufferWindow",
         version: 1.2,
-        position: [650, 224]
+        position: [560, 144]
     })
     Memory = {
+        sessionIdType: "customKey",
+        sessionKey: "={{ $(\"Waha Webhook\").item.json.body.payload.from }}",
         contextWindowLength: 10
     };
 
     @node({
-        id: "f2cb577d-7eb9-440b-81c5-f46213f14c45",
+        id: "b7766c26-12f5-4026-9a11-6abe3c462a31",
         name: "Send WAHA Message",
         type: "n8n-nodes-base.httpRequest",
         version: 4.2,
-        position: [850, 0]
+        position: [816, -80]
     })
     SendWahaMessage = {
         method: "POST",
-        url: "http://waha:3000/api/sendText",
+        url: "https://r2cwaha.ddns.net/api/sendText",
         sendBody: true,
-        contentType: "json",
-        bodyParameters: {
-            parameters: [
-                {
-                    name: "chatId",
-                    value: "={{ $json.payload.from }}"
-                },
-                {
-                    name: "text",
-                    value: "={{ $json.output }}"
-                },
-                {
-                    name: "session",
-                    value: "default"
-                }
-            ]
-        },
+        specifyBody: "json",
+        jsonBody: `{
+  "chatId": "{{ $('Waha Webhook').item.json.body.payload.from }}",
+  "text": "{{ $json.output }}",
+  "session": "default"
+}`,
         options: {}
     };
 
