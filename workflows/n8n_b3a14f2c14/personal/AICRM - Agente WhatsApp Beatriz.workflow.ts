@@ -2,7 +2,7 @@ import { workflow, node, links } from '@n8n-as-code/transformer';
 
 // <workflow-map>
 // Workflow : AICRM - Agente WhatsApp Beatriz
-// Nodes   : 7  |  Connections: 4
+// Nodes   : 7  |  Connections: 3
 //
 // NODE INDEX
 // ──────────────────────────────────────────────────────────────────
@@ -17,11 +17,10 @@ import { workflow, node, links } from '@n8n-as-code/transformer';
 //
 // ROUTING MAP
 // ──────────────────────────────────────────────────────────────────
-// WahaWebhook
-//    → IgnoreGroups
-//      → GetAiPersonality
-//        → AiAgent
-//          → SendWahaMessage
+// IgnoreGroups
+//    → GetAiPersonality
+//      → AiAgent
+//        → SendWahaMessage
 //
 // AI CONNECTIONS
 // AiAgent.uses({ ai_languageModel: GroqModel, ai_memory: Memory })
@@ -61,11 +60,18 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
         id: 'ae97ad16-7e5c-454a-b8b8-ea104bd03a7c',
         name: 'Ignore Groups',
         type: 'n8n-nodes-base.if',
-        version: 1,
-        position: [96, -48],
+        version: 2.2,
+        position: [32, -80],
     })
     IgnoreGroups = {
         conditions: {
+            options: {
+                version: 2,
+                leftValue: '',
+                caseSensitive: true,
+                typeValidation: 'loose',
+            },
+            combinator: 'and',
             string: [
                 {
                     value1: '={{ $json.body.event }}',
@@ -168,7 +174,6 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
 
     @links()
     defineRouting() {
-        this.WahaWebhook.out(0).to(this.IgnoreGroups.in(0));
         this.IgnoreGroups.out(0).to(this.GetAiPersonality.in(0));
         this.GetAiPersonality.out(0).to(this.AiAgent.in(0));
         this.AiAgent.out(0).to(this.SendWahaMessage.in(0));
