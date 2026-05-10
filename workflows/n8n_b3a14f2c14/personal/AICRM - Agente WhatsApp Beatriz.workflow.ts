@@ -53,6 +53,7 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
     WahaWebhook = {
         httpMethod: 'POST',
         path: 'aicrm-waha-webhook',
+        responseMode: 'lastNode',
         options: {},
     };
 
