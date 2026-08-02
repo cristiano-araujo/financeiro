@@ -1,7 +1,26 @@
 {
-  "version": 3,
-  "syncFolder": "workflows",
-  "projectId": "personal",
-  "projectName": "Personal",
-  "folderSync": false
+  "version": 4,
+  "activeEnvironmentId": "default",
+  "environmentTargets": [
+    {
+      "id": "default-instance",
+      "name": "Default Instance",
+      "kind": "external-instance",
+      "url": "https://r2csolution.duckdns.org",
+      "instanceIdentifier": "n8n_b3a14f2c14",
+      "instanceUserIdentifier": "n8n_b3a14f2c14"
+    }
+  ],
+  "environments": [
+    {
+      "id": "default",
+      "name": "Default",
+      "syncSlug": "default",
+      "environmentTargetId": "default-instance",
+      "projectId": "personal",
+      "projectName": "Personal",
+      "workflowsPath": "workflows/default",
+      "folderSync": false
+    }
+  ]
 }

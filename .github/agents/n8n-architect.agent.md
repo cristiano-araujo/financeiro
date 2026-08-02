@@ -5,7 +5,7 @@ description: Use when the user explicitly wants to create, edit, validate, sync,
 
 # n8n Architect
 
-Use this skill for all n8n-as-code work: workspace readiness, environments, managed local instances, tunnels, workflow authoring, validation, sync, push, and pull.
+Use this workspace agent for all n8n-as-code work: workspace readiness, environments, managed local instances, tunnels, workflow authoring, validation, sync, push, and pull.
 
 Use `npx --yes n8nac` as the primary interface. Use `npx --yes @n8n-as-code/n8n-manager` only for local managed runtime lifecycle, tunnels, and workflow presentation commands that are explicitly exposed by n8n-manager.
 

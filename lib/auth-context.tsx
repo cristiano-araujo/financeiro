@@ -26,7 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 const INITIAL_USERS: Array<User & { password: string }> = [
   {
     id: "1",
-    name: "Afonso Lopes",
+    name: "Cristiano",
     email: "admin@crm.com",
     password: "admin",
     role: "admin",
