@@ -36,12 +36,11 @@ import { workflow, node, links } from '@n8n-as-code/transformer';
 // =====================================================================
 
 @workflow({
-    id: 'Z1cUWl0tQKvf3kSh',
+    id: 'lzbI8CeNi5lFEFBE',
     name: 'AICRM - Agente WhatsApp Beatriz',
-    active: true,
+    active: false,
     isArchived: false,
-    projectId: '843sb0dwljbzp3e5',
-    settings: { executionOrder: 'v1', binaryMode: 'separate' },
+    settings: { executionOrder: 'v1' },
 })
 export class AicrmAgenteWhatsappBeatrizWorkflow {
     // =====================================================================
@@ -109,7 +108,7 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
         type: 'n8n-nodes-base.supabase',
         version: 1,
         position: [304, -80],
-        credentials: { supabaseApi: { id: 'JGCNengbH2tUqr5r', name: 'Supabase account' } },
+        credentials: { supabaseApi: { id: 'yxlRikYq8wKCbGRn', name: 'Supabase account' } },
     })
     GetAiPersonality = {
         operation: 'get',
@@ -145,7 +144,7 @@ export class AicrmAgenteWhatsappBeatrizWorkflow {
         type: '@n8n/n8n-nodes-langchain.lmChatGroq',
         version: 1,
         position: [416, 128],
-        credentials: { groqApi: { id: '4XklXkiOFw8srNtT', name: 'Groq account' } },
+        credentials: { groqApi: { id: 'j2fSZiQRO8qoiGyu', name: 'Groq account' } },
     })
     GroqModel = {
         model: 'llama-3.1-8b-instant',

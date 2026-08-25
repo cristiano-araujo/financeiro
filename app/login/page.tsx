@@ -28,7 +28,7 @@ export default function LoginPage() {
         toast.success("Bem-vindo de volta!")
         router.push("/dashboard")
       } else {
-        toast.error("Credenciais inválidas. Tente admin@crm.com / admin")
+        toast.error("Credenciais inválidas. Tente cristiano11715@gmail.com / admin")
       }
     } catch (error) {
       toast.error("Ocorreu um erro ao entrar.")
@@ -66,7 +66,7 @@ export default function LoginPage() {
               <Input 
                 id="email" 
                 type="email" 
-                placeholder="admin@crm.com" 
+                placeholder="cristiano11715@gmail.com" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 

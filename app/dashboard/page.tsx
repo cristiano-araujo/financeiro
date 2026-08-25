@@ -56,17 +56,22 @@ export default function DashboardPage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [stats, setStats] = useState({ totalLeads: 0, totalRevenue: 0, conversionRate: 0 })
   const [chartData, setChartData] = useState(DEFAULT_DATA)
+  const [businessName, setBusinessName] = useState("Beatriz")
 
   useEffect(() => {
     async function loadDashboard() {
-      const [statsData, weeklyData] = await Promise.all([
+      const [statsData, weeklyData, businessData] = await Promise.all([
         db.getDashboardStats(),
-        db.getWeeklyAppointments()
+        db.getWeeklyAppointments(),
+        db.getBusiness()
       ])
-      
+
       setStats(statsData)
       if (weeklyData.length > 0) {
         setChartData(weeklyData)
+      }
+      if (businessData?.name) {
+        setBusinessName(businessData.name)
       }
       setIsLoaded(true)
     }
@@ -137,7 +142,7 @@ export default function DashboardPage() {
                   <TrendingUp className="h-5 w-5 text-primary" />
                   Fluxo de Agendamentos (IA)
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Performance: Secretária Beatriz</CardDescription>
+                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Performance: Secretária {businessName}</CardDescription>
               </div>
               <div className="flex items-center gap-3 bg-primary/10 px-4 py-1.5 rounded-full border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.1)]">
                 <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),1)] animate-pulse" />
@@ -227,7 +232,7 @@ export default function DashboardPage() {
                   <div>
                     <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-1.5 flex items-center gap-1.5">
                       <Sparkles className="h-3 w-3" />
-                      Insight IA Beatriz
+                      Insight IA {businessName}
                     </p>
                     <p className="text-[11px] text-foreground font-bold leading-relaxed italic">
                       "O WhatsApp continua sendo seu canal mais forte. Ativar o 'Modo Urgência' lá pode aumentar as vendas em 12%."

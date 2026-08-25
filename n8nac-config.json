@@ -6,21 +6,33 @@
       "id": "default-instance",
       "name": "Default Instance",
       "kind": "external-instance",
-      "url": "https://r2csolution.duckdns.org",
+      "url": "https://r2cn8n.duckdns.org",
       "instanceIdentifier": "n8n_b3a14f2c14",
       "instanceUserIdentifier": "n8n_b3a14f2c14"
+    },
+    {
+      "id": "crmai",
+      "name": "crmAi",
+      "kind": "external-instance",
+      "url": "https://r2cn8n.duckdns.org/home/workflows"
+    },
+    {
+      "id": "testes",
+      "name": "testes",
+      "kind": "external-instance",
+      "url": "https://r2cn8n.duckdns.org/signin"
     }
   ],
   "environments": [
     {
       "id": "default",
-      "name": "Default",
+      "name": "default",
       "syncSlug": "default",
       "environmentTargetId": "default-instance",
-      "projectId": "personal",
-      "projectName": "Personal",
+      "projectId": "rI3NtUJON3uMZYw4",
+      "projectName": "crmAi",
       "workflowsPath": "workflows/default",
-      "folderSync": false
+      "folderSync": true
     }
   ]
 }

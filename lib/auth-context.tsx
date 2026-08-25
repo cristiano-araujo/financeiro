@@ -27,7 +27,7 @@ const INITIAL_USERS: Array<User & { password: string }> = [
   {
     id: "1",
     name: "Cristiano",
-    email: "admin@crm.com",
+    email: "cristiano11715@gmail.com",
     password: "admin",
     role: "admin",
     businessId: "1",
@@ -42,16 +42,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const savedUsers = localStorage.getItem("aicrm_users")
-    if (savedUsers) {
-      setUsers(JSON.parse(savedUsers))
-    } else {
-      setUsers(INITIAL_USERS)
+    let parsedUsers = savedUsers ? JSON.parse(savedUsers) : []
+
+    // Verify if default user with the new email exists
+    const hasDefaultUser = parsedUsers.some((u: any) => u.email === "cristiano11715@gmail.com")
+
+    if (!hasDefaultUser) {
+      // Force reset to new default user and clear old logged-in session (e.g. Afonso Lopes or admin@crm.com)
+      parsedUsers = INITIAL_USERS
       localStorage.setItem("aicrm_users", JSON.stringify(INITIAL_USERS))
+      localStorage.removeItem("aicrm_user")
     }
+
+    setUsers(parsedUsers)
 
     const savedUser = localStorage.getItem("aicrm_user")
     if (savedUser) {
       setUser(JSON.parse(savedUser))
+    } else if (!hasDefaultUser) {
+      // Force logout visually
+      setUser(null)
     }
     setIsLoading(false)
   }, [])
